@@ -73,6 +73,7 @@ const onSubmit = async () => {
     router.push('/profile');
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Неверный email или пароль' });
+    console.error(error);
   }
 };
 </script>

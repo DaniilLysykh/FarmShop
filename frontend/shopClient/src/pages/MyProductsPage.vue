@@ -126,6 +126,7 @@ const saveProduct = async () => {
     loadProducts();
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Ошибка при сохранении товара' });
+    console.error(error);
   }
 };
 

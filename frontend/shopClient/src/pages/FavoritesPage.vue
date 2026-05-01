@@ -68,6 +68,7 @@ const removeFromFavorites = async (id) => {
     await loadFavorites(); // Обновляем список
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Ошибка при удалении' });
+    console.error(error);
   }
 };
 
@@ -78,6 +79,7 @@ const addToCart = async (productId) => {
     $q.notify({ type: 'positive', message: 'Товар добавлен в корзину' });
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Ошибка добавления в корзину' });
+    console.error(error);
   }
 };
 
