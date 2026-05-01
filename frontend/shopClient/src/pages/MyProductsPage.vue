@@ -513,7 +513,16 @@ onMounted(() => {
   border-radius: 24px;
   width: 500px;
   max-width: 90vw;
+  max-height: 90vh;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-form {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .dialog-header {
@@ -529,10 +538,6 @@ onMounted(() => {
   font-weight: 700;
   color: #1a1a1a;
   margin: 0;
-}
-
-.dialog-form {
-  padding: 24px;
 }
 
 .form-group {
