@@ -50,6 +50,15 @@
                 <span>Остаток: {{ product.stock }} {{ product.unit }}</span>
               </div>
             </div>
+
+            <div class="card-actions">
+              <q-btn flat round icon="edit" color="blue" @click="editProduct(product)" class="action-btn">
+                <q-tooltip>Редактировать</q-tooltip>
+              </q-btn>
+              <q-btn flat round icon="delete" color="red" @click="confirmDelete(product)" class="action-btn">
+                <q-tooltip>Удалить</q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </div>
       </div>
@@ -154,6 +163,29 @@ const loadProducts = async () => {
   } catch (error) {
     console.error('Ошибка при загрузке товаров', error);
   }
+};
+
+const editProduct = (product) => {
+  $q.notify({ type: 'info', message: 'Функция редактирования в разработке' });
+};
+
+const confirmDelete = (product) => {
+  $q.dialog({
+    title: 'Удаление товара',
+    message: `Вы уверены, что хотите удалить "${product.name}"?`,
+    cancel: true,
+    persistent: true,
+    ok: { label: 'Удалить', color: 'negative', unelevated: true },
+    cancel: { label: 'Отмена', flat: true, color: 'grey' }
+  }).onOk(async () => {
+    try {
+      await api.delete(`/products/${product.id}`);
+      $q.notify({ type: 'positive', message: 'Товар удален' });
+      loadProducts();
+    } catch (error) {
+      $q.notify({ type: 'negative', message: 'Ошибка удаления товара' });
+    }
+  });
 };
 
 const saveProduct = async () => {
@@ -342,6 +374,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin-bottom: 16px;
 }
 
 .meta-item {
@@ -354,6 +387,17 @@ onMounted(() => {
   .q-icon {
     color: #2e7d32;
   }
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.action-btn {
+  flex: 1;
 }
 
 .dialog-card {
