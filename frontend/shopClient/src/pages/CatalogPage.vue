@@ -107,7 +107,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { api } from 'boot/axios';
 import { useAuthStore } from 'stores/auth';
 import { useQuasar } from 'quasar';
@@ -195,6 +195,14 @@ onMounted(() => {
   if (authStore.isCustomer) {
     loadFavorites();
   }
+});
+
+watch(selectedCategory, () => {
+  loadProducts();
+});
+
+watch(searchQuery, () => {
+  loadProducts();
 });
 </script>
 
