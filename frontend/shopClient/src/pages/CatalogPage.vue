@@ -173,6 +173,7 @@ const toggleFavorite = async (productId) => {
     }
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Ошибка обновления избранного' });
+    console.error(error);
   }
 };
 
