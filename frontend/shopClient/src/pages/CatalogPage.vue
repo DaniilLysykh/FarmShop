@@ -90,8 +90,8 @@
               </div>
               
               <div class="product-actions" v-if="authStore.isCustomer">
-                <q-btn flat round color="grey-5" icon="favorite_border" @click="addToFavorites(product.id)" class="action-btn hover-red">
-                  <q-tooltip>В избранное</q-tooltip>
+                <q-btn flat round :icon="isFavorite(product.id) ? 'favorite' : 'favorite_border'" :color="isFavorite(product.id) ? 'red' : 'grey-5'" @click="toggleFavorite(product.id)" class="action-btn">
+                  <q-tooltip>{{ isFavorite(product.id) ? 'Убрать из избранного' : 'В избранное' }}</q-tooltip>
                 </q-btn>
                 <q-btn unelevated class="add-to-cart-btn" @click="addToCart(product.id)">
                   <q-icon name="add_shopping_cart" />
@@ -119,6 +119,7 @@ const categories = ref([]);
 const loading = ref(false);
 const searchQuery = ref('');
 const selectedCategory = ref(null);
+const favoriteIds = ref([]);
 
 const loadCategories = async () => {
   try {
@@ -139,6 +140,39 @@ const loadProducts = async () => {
   finally { loading.value = false; }
 };
 
+const loadFavorites = async () => {
+  try {
+    const response = await api.get('/favorites');
+    favoriteIds.value = response.data.map(item => item.productId);
+  } catch (error) {
+    console.error('Ошибка загрузки избранного', error);
+  }
+};
+
+const isFavorite = (productId) => {
+  return favoriteIds.value.includes(productId);
+};
+
+const toggleFavorite = async (productId) => {
+  try {
+    if (isFavorite(productId)) {
+      // Находим id избранного для удаления
+      const favoriteId = favoriteIds.value.find(id => id === productId);
+      if (favoriteId) {
+        await api.delete(`/favorites/remove/${productId}`);
+        favoriteIds.value = favoriteIds.value.filter(id => id !== productId);
+        $q.notify({ type: 'info', message: 'Товар убран из избранного' });
+      }
+    } else {
+      await api.post('/favorites/add', { productId: productId });
+      favoriteIds.value.push(productId);
+      $q.notify({ type: 'positive', message: 'Товар добавлен в избранное' });
+    }
+  } catch (error) {
+    $q.notify({ type: 'negative', message: 'Ошибка обновления избранного' });
+  }
+};
+
 const addToCart = async (productId) => {
   try {
     await api.post('/cart/add', { productId: productId, quantity: 1 });
@@ -148,16 +182,13 @@ const addToCart = async (productId) => {
   }
 };
 
-const addToFavorites = async (productId) => {
-  try {
-    await api.post('/favorites/add', { productId: productId });
-    $q.notify({ type: 'positive', message: 'Товар добавлен в избранное' });
-  } catch (error) {
-    $q.notify({ type: 'negative', message: error.response?.data?.error || 'Товар уже в избранном' });
+onMounted(() => { 
+  loadCategories(); 
+  loadProducts(); 
+  if (authStore.isCustomer) {
+    loadFavorites();
   }
-};
-
-onMounted(() => { loadCategories(); loadProducts(); });
+});
 </script>
 
 <style scoped lang="scss">
