@@ -41,6 +41,7 @@ public class Order {
 
     // Связь один-ко-многим: при удалении заказа удалятся и его элементы
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
 
     @PrePersist
