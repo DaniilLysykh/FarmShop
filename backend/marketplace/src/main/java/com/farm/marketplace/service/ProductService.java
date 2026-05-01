@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.Pageable;
+ import java.math.BigDecimal;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -46,6 +49,30 @@ public class ProductService {
     private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new AppException("Пользователь не найден", HttpStatus.NOT_FOUND));
+    }
+
+    public Page<ProductResponse> getPublicProducts(String categoryStr,
+                                                   BigDecimal minPrice,
+                                                   BigDecimal maxPrice,
+                                                   Long farmerId,
+                                                   String search,
+                                                   Pageable pageable) {
+
+        Category category = null;
+        if (categoryStr != null && !categoryStr.trim().isEmpty()) {
+            try {
+                category = Category.valueOf(categoryStr.toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // Игнорируем неверную категорию в фильтре, либо можно выбросить AppException
+            }
+        }
+
+        Page<Product> productsPage = productRepository.findProductsPublic(
+                category, minPrice, maxPrice, farmerId, search, pageable
+        );
+
+        // Преобразуем Page<Product> в Page<ProductResponse>
+        return productsPage.map(this::mapToResponse);
     }
 
     public ProductResponse createProduct(ProductRequest request, String email) {

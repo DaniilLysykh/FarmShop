@@ -11,6 +11,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+ import org.springframework.data.domain.Page;
+ import org.springframework.data.domain.PageRequest;
+ import org.springframework.data.domain.Pageable;
+ import org.springframework.data.domain.Sort;
+ import java.math.BigDecimal;
 
 import java.util.List;
 
@@ -64,5 +69,31 @@ public class ProductController {
                                                               Authentication authentication) {
         ProductResponse response = productService.uploadProductImage(id, file, authentication.getName());
         return ResponseEntity.ok(response);
+    }
+
+    // Публичный каталог товаров с фильтрацией и пагинацией
+    @GetMapping("/public")
+    public ResponseEntity<Page<ProductResponse>> getPublicProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) Long farmerId,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        // Настройка сортировки
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+
+        // Объект для пагинации
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<ProductResponse> products = productService.getPublicProducts(
+                category, minPrice, maxPrice, farmerId, search, pageable
+        );
+        return ResponseEntity.ok(products);
     }
 }
