@@ -34,6 +34,14 @@
               class="card-image"
             />
             <q-chip size="sm" class="category-chip">{{ getCategoryLabel(product.category) }}</q-chip>
+            <div class="card-overlay-actions">
+              <q-btn flat round icon="edit" color="white" class="action-btn edit-btn" @click="openEditDialog(product)">
+                <q-tooltip>Редактировать</q-tooltip>
+              </q-btn>
+              <q-btn flat round icon="delete" color="white" class="action-btn delete-btn" @click="confirmDelete(product)">
+                <q-tooltip>Удалить</q-tooltip>
+              </q-btn>
+            </div>
           </div>
           
           <div class="card-content">
@@ -49,15 +57,6 @@
                 <q-icon name="inventory" />
                 <span>Остаток: {{ product.stock }} {{ product.unit }}</span>
               </div>
-            </div>
-
-            <div class="card-actions">
-              <q-btn flat round icon="edit" color="blue" @click="editProduct(product)" class="action-btn">
-                <q-tooltip>Редактировать</q-tooltip>
-              </q-btn>
-              <q-btn flat round icon="delete" color="red" @click="confirmDelete(product)" class="action-btn">
-                <q-tooltip>Удалить</q-tooltip>
-              </q-btn>
             </div>
           </div>
         </div>
@@ -120,6 +119,63 @@
         </q-form>
       </div>
     </q-dialog>
+
+    <q-dialog v-model="showEditDialog" persistent>
+      <div class="dialog-card">
+        <div class="dialog-header">
+          <h2 class="dialog-title">Редактирование товара</h2>
+          <q-btn round flat icon="close" v-close-popup />
+        </div>
+
+        <q-form @submit.prevent="updateProduct" class="dialog-form">
+          <div class="form-group">
+            <label>Название</label>
+            <q-input v-model="editingProduct.name" outlined rounded placeholder="Молоко свежее" required />
+          </div>
+          
+          <div class="form-group">
+            <label>Описание</label>
+            <q-input v-model="editingProduct.description" outlined rounded type="textarea" placeholder="Опишите товар..." />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Цена (руб.)</label>
+              <q-input v-model.number="editingProduct.price" outlined rounded type="number" placeholder="100" required />
+            </div>
+            <div class="form-group half">
+              <label>Ед. измерения</label>
+              <q-input v-model="editingProduct.unit" outlined rounded placeholder="кг, л, шт" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Остаток</label>
+              <q-input v-model.number="editingProduct.stock" outlined rounded type="number" placeholder="10" required />
+            </div>
+            <div class="form-group half">
+            <label>Категория</label>
+              <q-select v-model="editingProduct.category" :options="categories" emit-value map-options outlined rounded placeholder="Выберите" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Фото товара</label>
+            <q-file v-model="imageFile" outlined rounded accept=".jpg,image/*" class="file-input">
+              <template v-slot:prepend>
+                <q-icon name="attach_file" />
+              </template>
+            </q-file>
+          </div>
+
+          <div class="dialog-actions">
+            <q-btn flat label="Отмена" color="grey" v-close-popup />
+            <q-btn unelevated type="submit" label="Сохранить" class="save-btn" :loading="saving" />
+          </div>
+        </q-form>
+      </div>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -134,6 +190,8 @@ const { getCategoryLabel } = useCategoryLabel();
 const $q = useQuasar();
 const products = ref([]);
 const showAddDialog = ref(false);
+const showEditDialog = ref(false);
+const editingProduct = ref(null);
 const saving = ref(false);
 
 const categories = [
@@ -165,8 +223,39 @@ const loadProducts = async () => {
   }
 };
 
-const editProduct = (product) => {
-  $q.notify({ type: 'info', message: 'Функция редактирования в разработке' });
+const openEditDialog = (product) => {
+  editingProduct.value = { ...product };
+  showEditDialog.value = true;
+};
+
+const updateProduct = async () => {
+  saving.value = true;
+  try {
+    await api.put(`/products/${editingProduct.value.id}`, {
+      name: editingProduct.value.name,
+      description: editingProduct.value.description,
+      price: editingProduct.value.price,
+      unit: editingProduct.value.unit,
+      stock: editingProduct.value.stock,
+      category: editingProduct.value.category
+    });
+
+    if (imageFile.value) {
+      const formData = new FormData();
+      formData.append('file', imageFile.value);
+      await api.post(`/products/${editingProduct.value.id}/image`, formData);
+    }
+
+    $q.notify({ type: 'positive', message: 'Товар обновлен!' });
+    showEditDialog.value = false;
+    imageFile.value = null;
+    loadProducts();
+  } catch (error) {
+    $q.notify({ type: 'negative', message: 'Ошибка обновления товара' });
+    console.error(error);
+  } finally {
+    saving.value = false;
+  }
 };
 
 const confirmDelete = (product) => {
@@ -327,6 +416,10 @@ onMounted(() => {
   &:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    
+    .card-overlay-actions {
+      opacity: 1;
+    }
   }
 }
 
@@ -347,6 +440,33 @@ onMounted(() => {
   background: rgba(46, 125, 50, 0.9);
   color: white;
   font-weight: 600;
+}
+
+.card-overlay-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  
+  .action-btn {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.7);
+    }
+  }
+  
+  .edit-btn:hover {
+    color: #2196f3 !important;
+  }
+  
+  .delete-btn:hover {
+    color: #f44336 !important;
+  }
 }
 
 .card-content {
@@ -374,7 +494,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
 }
 
 .meta-item {
@@ -387,17 +506,6 @@ onMounted(() => {
   .q-icon {
     color: #2e7d32;
   }
-}
-
-.card-actions {
-  display: flex;
-  gap: 8px;
-  padding-top: 12px;
-  border-top: 1px solid #eee;
-}
-
-.action-btn {
-  flex: 1;
 }
 
 .dialog-card {
