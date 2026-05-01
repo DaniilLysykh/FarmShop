@@ -10,6 +10,9 @@ const routes = [
       { path: 'login', component: () => import('pages/LoginPage.vue') },
       { path: 'register', component: () => import('pages/RegisterPage.vue') },
       { path: 'my-products', component: () => import('pages/MyProductsPage.vue') },
+      { path: 'my-orders', component: () => import('pages/MyOrdersPage.vue') },
+      { path: 'farmer-orders', component: () => import('pages/FarmerOrdersPage.vue') },
+      { path: 'favorites', component: () => import('pages/FavoritesPage.vue') },
     ],
   },
 

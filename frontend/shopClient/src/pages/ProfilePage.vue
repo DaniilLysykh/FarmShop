@@ -31,6 +31,18 @@
           <q-card-actions align="center" v-if="isFarmer" class="q-pt-md">
             <q-btn color="green-8" icon="inventory_2" label="Управление товарами" to="/my-products" />
           </q-card-actions>
+
+          <q-card-actions align="center" class="q-pt-md">
+            <template v-if="isFarmer">
+              <q-btn color="green-8" icon="inventory_2" label="Мои товары" to="/my-products" class="q-mr-sm" />
+              <q-btn color="blue-8" icon="local_shipping" label="Входящие заказы" to="/farmer-orders" />
+            </template>
+            
+            <template v-else>
+              <q-btn color="orange-8" icon="favorite" label="Избранное" to="/favorites" class="q-mr-sm" />
+              <q-btn color="blue-8" icon="history" label="История заказов" to="/my-orders" />
+            </template>
+          </q-card-actions>
         </q-card>
       </div>
     </div>
