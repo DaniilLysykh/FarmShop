@@ -1,44 +1,65 @@
 <template>
-  <q-page padding class="bg-grey-2">
-    <div class="text-h4 q-mb-md">История заказов</div>
-
-    <div v-if="loading" class="text-center q-pa-xl">
-      <q-spinner color="green" size="3em" />
+  <q-page class="orders-page">
+    <div class="page-header">
+      <div class="header-content">
+        <h1 class="page-title">История заказов</h1>
+        <p class="page-subtitle" v-if="orders.length > 0">{{ orders.length }} заказов</p>
+      </div>
     </div>
 
-    <div v-else-if="orders.length === 0" class="text-center text-grey text-h6 q-pa-xl">
-      У вас пока нет заказов.
-    </div>
+    <div class="orders-container">
+      <div v-if="loading" class="loading-state">
+        <q-spinner color="green" size="3em" />
+      </div>
 
-    <div v-else class="row q-col-gutter-md">
-      <div class="col-12" v-for="order in orders" :key="order.id">
-        <q-card>
-          <q-card-section class="bg-grey-3 row justify-between items-center">
-            <div class="text-h6">Заказ #{{ order.id }} от {{ formatDate(order.createdAt) }}</div>
-            <q-chip :color="statusMap[order.status].color" text-color="white" class="text-weight-bold">
+      <div v-else-if="orders.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <q-icon name="receipt_long" />
+        </div>
+        <h2 class="empty-title">Заказов пока нет</h2>
+        <p class="empty-text">Оформите первый заказ в каталоге</p>
+        <q-btn unelevated to="/catalog" class="empty-btn">
+          <q-icon name="store" class="q-mr-sm" />
+          В каталог
+        </q-btn>
+      </div>
+
+      <div v-else class="orders-list">
+        <div class="order-card" v-for="order in orders" :key="order.id">
+          <div class="order-header">
+            <div class="order-info">
+              <h3 class="order-number">Заказ #{{ order.id }}</h3>
+              <span class="order-date">{{ formatDate(order.createdAt) }}</span>
+            </div>
+            <q-chip :color="statusMap[order.status].color" text-color="white" class="status-chip">
               {{ statusMap[order.status].label }}
             </q-chip>
-          </q-card-section>
+          </div>
 
-          <q-card-section>
-            <div class="text-subtitle2 q-mb-sm">Адрес доставки: {{ order.address }}</div>
-            <q-list bordered separator>
-              <q-item v-for="item in order.items" :key="item.productId">
-                <q-item-section>
-                  <q-item-label>{{ item.productName }}</q-item-label>
-                  <q-item-label caption>{{ item.quantity }} шт. x {{ item.priceAtPurchase }} руб.</q-item-label>
-                </q-item-section>
-                <q-item-section side>
-                  <div class="text-weight-bold">{{ (item.quantity * item.priceAtPurchase).toFixed(2) }} руб.</div>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-card-section>
+          <div class="order-details">
+            <div class="detail-row">
+              <q-icon name="location_on" />
+              <span>{{ order.address }}</span>
+            </div>
+          </div>
 
-          <q-card-actions align="right" class="bg-grey-1">
-            <div class="text-h6">Итого: <span class="text-green-8">{{ order.totalPrice }} руб.</span></div>
-          </q-card-actions>
-        </q-card>
+          <q-separator />
+
+          <div class="order-items">
+            <div class="item" v-for="item in order.items" :key="item.productId">
+              <div class="item-info">
+                <span class="item-name">{{ item.productName }}</span>
+                <span class="item-qty">{{ item.quantity }} шт. x {{ item.priceAtPurchase }} руб.</span>
+              </div>
+              <span class="item-total">{{ (item.quantity * item.priceAtPurchase).toFixed(2) }} руб.</span>
+            </div>
+          </div>
+
+          <div class="order-footer">
+            <div class="total-label">Итого:</div>
+            <div class="total-value">{{ order.totalPrice }} руб.</div>
+          </div>
+        </div>
       </div>
     </div>
   </q-page>
@@ -54,11 +75,10 @@ const { formatDate } = useFormatDate();
 const orders = ref([]);
 const loading = ref(true);
 
-// Тот самый словарь (маппинг) статусов
 const statusMap = {
-  PENDING: { label: 'Ожидает подтверждения', color: 'orange' },
-  ACCEPTED: { label: 'Принят в работу', color: 'blue' },
-  READY_FOR_PICKUP: { label: 'Готов к выдаче', color: 'purple' },
+  PENDING: { label: 'Ожидает', color: 'orange' },
+  ACCEPTED: { label: 'В работе', color: 'blue' },
+  READY_FOR_PICKUP: { label: 'Готов', color: 'purple' },
   DELIVERED: { label: 'Выполнен', color: 'green' },
   CANCELLED: { label: 'Отменен', color: 'red' }
 };
@@ -76,3 +96,203 @@ const loadOrders = async () => {
 
 onMounted(() => loadOrders());
 </script>
+
+<style scoped lang="scss">
+.orders-page {
+  background: #f5f7f5;
+  min-height: 100vh;
+}
+
+.page-header {
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  padding: 40px 24px;
+}
+
+.header-content {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 8px 0 0;
+}
+
+.orders-container {
+  max-width: 900px;
+  margin: -40px auto 0;
+  padding: 0 24px 60px;
+  position: relative;
+  z-index: 2;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.empty-state {
+  background: white;
+  border-radius: 24px;
+  padding: 80px 40px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+  width: 120px;
+  height: 120px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  
+  .q-icon {
+    font-size: 60px;
+    color: #ccc;
+  }
+}
+
+.empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px;
+}
+
+.empty-text {
+  color: #888;
+  margin: 0 0 24px;
+}
+
+.empty-btn {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-number {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 4px;
+}
+
+.order-date {
+  color: #888;
+  font-size: 0.875rem;
+}
+
+.status-chip {
+  font-weight: 600;
+}
+
+.order-details {
+  margin-bottom: 16px;
+  
+  .detail-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 0.9rem;
+    
+    .q-icon {
+      color: #888;
+    }
+  }
+}
+
+.order-items {
+  padding: 16px 0;
+  
+  .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  .item-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .item-name {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .item-qty {
+    font-size: 0.85rem;
+    color: #888;
+  }
+  
+  .item-total {
+    font-weight: 600;
+    color: #2e7d32;
+  }
+}
+
+.order-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+}
+
+.total-label {
+  font-size: 1rem;
+  color: #666;
+}
+
+.total-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #2e7d32;
+}
+</style>

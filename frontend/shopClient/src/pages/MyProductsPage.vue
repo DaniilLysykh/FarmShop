@@ -1,67 +1,115 @@
 <template>
-  <q-page padding>
-    <div class="row justify-between items-center q-mb-md">
-      <div class="text-h4">Мои товары</div>
-      <q-btn color="green-8" icon="add" label="Добавить товар" @click="showAddDialog = true" />
-    </div>
-
-    <div class="row q-col-gutter-md">
-      <div class="col-12 col-sm-6 col-md-4" v-for="product in products" :key="product.id">
-        <q-card>
-          <q-img :src="product.imageUrl ? `http://26.151.165.100:8080/api${product.imageUrl}` : 'https://via.placeholder.com/300x200?text=Нет+фото'" height="200px" />
-          
-          <q-card-section>
-            <div class="text-h6">{{ product.name }}</div>
-            <div class="text-subtitle2 text-green-8 text-weight-bold">{{ product.price }} руб. / {{ product.unit }}</div>
-            <div class="text-caption text-grey">Остаток: {{ product.stock }} {{ product.unit }}</div>
-            <q-chip size="sm" color="orange" text-color="white" class="q-mt-sm">{{ product.category }}</q-chip>
-          </q-card-section>
-        </q-card>
+  <q-page class="products-page">
+    <div class="page-header">
+      <div class="header-content">
+        <div class="header-left">
+          <h1 class="page-title">Мои товары</h1>
+          <p class="page-subtitle" v-if="products.length > 0">{{ products.length }} товаров</p>
+        </div>
+        <q-btn unelevated class="add-btn" @click="showAddDialog = true">
+          <q-icon name="add" />
+          Добавить товар
+        </q-btn>
       </div>
     </div>
 
-    <q-dialog v-model="showAddDialog">
-      <q-card style="min-width: 400px">
-        <q-card-section>
-          <div class="text-h6">Новый товар</div>
-        </q-card-section>
+    <div class="products-container">
+      <div v-if="products.length === 0" class="empty-state">
+        <div class="empty-icon">
+          <q-icon name="inventory_2" />
+        </div>
+        <h2 class="empty-title">Товаров пока нет</h2>
+        <p class="empty-text">Добавьте первый товар</p>
+        <q-btn unelevated class="empty-btn" @click="showAddDialog = true">
+          <q-icon name="add" class="q-mr-sm" />
+          Добавить товар
+        </q-btn>
+      </div>
 
-        <q-card-section>
-          <q-form @submit.prevent="saveProduct">
-            <q-input v-model="form.name" label="Название" outlined class="q-mb-sm" required />
-            <q-input v-model="form.description" label="Описание" type="textarea" outlined class="q-mb-sm" />
+      <div v-else class="products-grid">
+        <div class="product-card" v-for="product in products" :key="product.id">
+          <div class="card-image-wrapper">
+            <q-img 
+              :src="product.imageUrl ? `http://26.151.165.100:8080/api${product.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              class="card-image"
+            />
+            <q-chip size="sm" class="category-chip">{{ product.category }}</q-chip>
+          </div>
+          
+          <div class="card-content">
+            <h3 class="card-title">{{ product.name }}</h3>
+            <p class="card-description">{{ product.description }}</p>
             
-            <div class="row q-col-gutter-sm q-mb-sm">
-              <div class="col-6">
-                <q-input v-model="form.price" label="Цена" type="number" outlined required />
+            <div class="card-meta">
+              <div class="meta-item">
+                <q-icon name="sell" />
+                <span>{{ product.price }} руб.</span>
               </div>
-              <div class="col-6">
-                <q-input v-model="form.unit" label="Ед. измерения (кг, л)" outlined required />
-              </div>
-            </div>
-
-            <div class="row q-col-gutter-sm q-mb-sm">
-              <div class="col-6">
-                <q-input v-model="form.stock" label="Остаток" type="number" outlined required />
-              </div>
-              <div class="col-6">
-                <q-select v-model="form.category" :options="categories" label="Категория" outlined required />
+              <div class="meta-item">
+                <q-icon name="inventory" />
+                <span>Остаток: {{ product.stock }} {{ product.unit }}</span>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            <q-file v-model="imageFile" label="Выберите фото" outlined class="q-mb-md" accept=".jpg, image/*">
+    <q-dialog v-model="showAddDialog" persistent>
+      <div class="dialog-card">
+        <div class="dialog-header">
+          <h2 class="dialog-title">Новый товар</h2>
+          <q-btn round flat icon="close" v-close-popup />
+        </div>
+
+        <q-form @submit.prevent="saveProduct" class="dialog-form">
+          <div class="form-group">
+            <label>Название</label>
+            <q-input v-model="form.name" outlined rounded placeholder="Молоко свежее" required />
+          </div>
+          
+          <div class="form-group">
+            <label>Описание</label>
+            <q-input v-model="form.description" outlined rounded type="textarea" placeholder="Опишите товар..." />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Цена (руб.)</label>
+              <q-input v-model.number="form.price" outlined rounded type="number" placeholder="100" required />
+            </div>
+            <div class="form-group half">
+              <label>Ед. измерения</label>
+              <q-input v-model="form.unit" outlined rounded placeholder="кг, л, шт" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group half">
+              <label>Остаток</label>
+              <q-input v-model.number="form.stock" outlined rounded type="number" placeholder="10" required />
+            </div>
+            <div class="form-group half">
+              <label>Категория</label>
+              <q-select v-model="form.category" :options="categories" outlined rounded placeholder="Выберите" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Фото товара</label>
+            <q-file v-model="imageFile" outlined rounded accept=".jpg,image/*" class="file-input">
               <template v-slot:prepend>
                 <q-icon name="attach_file" />
               </template>
             </q-file>
+          </div>
 
-            <q-card-actions align="right">
-              <q-btn flat label="Отмена" color="red" v-close-popup />
-              <q-btn label="Сохранить" type="submit" color="green-8" />
-            </q-card-actions>
-          </q-form>
-        </q-card-section>
-      </q-card>
+          <div class="dialog-actions">
+            <q-btn flat label="Отмена" color="grey" v-close-popup />
+            <q-btn unelevated type="submit" label="Сохранить" class="save-btn" :loading="saving" />
+          </div>
+        </q-form>
+      </div>
     </q-dialog>
   </q-page>
 </template>
@@ -74,6 +122,7 @@ import { useQuasar } from 'quasar';
 const $q = useQuasar();
 const products = ref([]);
 const showAddDialog = ref(false);
+const saving = ref(false);
 
 const categories = ['MILK', 'MEAT', 'VEGETABLES', 'HONEY', 'EGGS', 'BREAD'];
 
@@ -86,10 +135,8 @@ const form = reactive({
   category: ''
 });
 
-// Отдельная переменная для файла картинки
 const imageFile = ref(null);
 
-// Загрузка товаров фермера
 const loadProducts = async () => {
   try {
     const response = await api.get('/products/my');
@@ -99,34 +146,28 @@ const loadProducts = async () => {
   }
 };
 
-// Сохранение нового товара и картинки
 const saveProduct = async () => {
+  saving.value = true;
   try {
-    // 1. Сначала отправляем JSON с данными товара
     const response = await api.post('/products', form);
     const productId = response.data.id;
 
-    // 2. Если пользователь выбрал файл, отправляем его отдельным запросом
     if (imageFile.value) {
       const formData = new FormData();
       formData.append('file', imageFile.value);
-      
-      // Axios сам выставит нужные заголовки multipart/form-data
       await api.post(`/products/${productId}/image`, formData);
     }
 
     $q.notify({ type: 'positive', message: 'Товар успешно добавлен!' });
     showAddDialog.value = false;
-    
-    // Сбрасываем форму
     Object.keys(form).forEach(key => form[key] = '');
     imageFile.value = null;
-    
-    // Обновляем список товаров
     loadProducts();
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Ошибка при сохранении товара' });
     console.error(error);
+  } finally {
+    saving.value = false;
   }
 };
 
@@ -134,3 +175,247 @@ onMounted(() => {
   loadProducts();
 });
 </script>
+
+<style scoped lang="scss">
+.products-page {
+  background: #f5f7f5;
+  min-height: 100vh;
+}
+
+.page-header {
+  background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+  padding: 40px 24px;
+}
+
+.header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  margin: 0;
+}
+
+.page-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  margin: 8px 0 0;
+}
+
+.add-btn {
+  background: white;
+  color: #2e7d32;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  
+  .q-icon {
+    margin-right: 8px;
+  }
+}
+
+.products-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+.empty-state {
+  background: white;
+  border-radius: 24px;
+  padding: 80px 40px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.empty-icon {
+  width: 120px;
+  height: 120px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  
+  .q-icon {
+    font-size: 60px;
+    color: #ccc;
+  }
+}
+
+.empty-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 8px;
+}
+
+.empty-text {
+  color: #888;
+  margin: 0 0 24px;
+}
+
+.empty-btn {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.card-image-wrapper {
+  position: relative;
+  height: 200px;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+}
+
+.category-chip {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: rgba(46, 125, 50, 0.9);
+  color: white;
+  font-weight: 600;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px;
+}
+
+.card-description {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0 0 16px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #888;
+  font-size: 0.875rem;
+  
+  .q-icon {
+    color: #2e7d32;
+  }
+}
+
+.dialog-card {
+  background: white;
+  border-radius: 24px;
+  width: 500px;
+  max-width: 90vw;
+  overflow: hidden;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  border-bottom: 1px solid #eee;
+}
+
+.dialog-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+.dialog-form {
+  padding: 24px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  
+  label {
+    display: block;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+  }
+  
+  :deep(.q-field__control) {
+    border-radius: 12px;
+  }
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.half {
+  flex: 1;
+}
+
+.file-input {
+  :deep(.q-field__control) {
+    height: 48px;
+  }
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.save-btn {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+  color: white;
+  padding: 12px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+</style>
