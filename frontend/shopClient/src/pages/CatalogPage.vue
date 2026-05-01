@@ -1,0 +1,9 @@
+<template>
+  <q-page padding>
+    <h1>Станица каталога</h1>
+  </q-page>
+</template>
+
+<script setup>
+// Здесь позже будет логика компонента
+</script>
