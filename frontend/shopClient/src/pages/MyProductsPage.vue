@@ -262,7 +262,6 @@ const confirmDelete = (product) => {
   $q.dialog({
     title: 'Удаление товара',
     message: `Вы уверены, что хотите удалить "${product.name}"?`,
-    cancel: true,
     persistent: true,
     ok: { label: 'Удалить', color: 'negative', unelevated: true },
     cancel: { label: 'Отмена', flat: true, color: 'grey' }
@@ -271,7 +270,7 @@ const confirmDelete = (product) => {
       await api.delete(`/products/${product.id}`);
       $q.notify({ type: 'positive', message: 'Товар удален' });
       loadProducts();
-    } catch (error) {
+    } catch {
       $q.notify({ type: 'negative', message: 'Ошибка удаления товара' });
     }
   });
