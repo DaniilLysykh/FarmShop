@@ -48,6 +48,9 @@
 import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
+import { useFormatDate } from 'src/composables/useFormatDate';
+
+const { formatDate } = useFormatDate();
 
 const $q = useQuasar();
 const orders = ref([]);
@@ -80,10 +83,6 @@ const updateStatus = async (orderId, newStatus) => {
     $q.notify({ type: 'negative', message: 'Ошибка обновления статуса' });
     loadOrders(); // Откатываем статус на экране, если сервер выдал ошибку
   }
-};
-
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleString('ru-RU');
 };
 
 onMounted(() => loadOrders());
