@@ -7,7 +7,7 @@
             <q-icon name="person_add" />
           </div>
           <h1 class="auth-title">Регистрация</h1>
-          <p class="auth-subtitle">Создайте аккаунт на Farm Market</p>
+          <p class="auth-subtitle">Создайте аккаунт на Фермерской лавки</p>
         </div>
 
         <q-form @submit.prevent="onSubmit" class="auth-form">

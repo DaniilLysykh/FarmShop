@@ -5,7 +5,7 @@
         <router-link to="/" class="logo-link">
           <div class="logo">
             <q-icon name="eco" class="logo-icon" />
-            <span class="logo-text">Farm Market</span>
+            <span class="logo-text">Фермерская лавка</span>
           </div>
         </router-link>
 
@@ -57,7 +57,7 @@
       <div class="footer-content">
         <div class="footer-brand">
           <q-icon name="eco" size="24px" class="q-mr-sm" />
-          <span>Farm Market 2024</span>
+          <span>Фермерская лавка 2026</span>
         </div>
         <div class="footer-links">
           <span class="footer-link">О нас</span>

@@ -7,7 +7,7 @@
             <q-icon name="eco" />
           </div>
           <h1 class="auth-title">Добро пожаловать</h1>
-          <p class="auth-subtitle">Войдите в свой аккаунт Farm Market</p>
+          <p class="auth-subtitle">Войдите в свой аккаунт Фермерской лавки</p>
         </div>
 
         <q-form @submit.prevent="onSubmit" class="auth-form">

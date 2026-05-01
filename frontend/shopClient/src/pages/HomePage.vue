@@ -58,7 +58,7 @@
 
     <div class="cta-section">
       <div class="cta-content">
-        <h2>Присоединяйтесь кFarm Market</h2>
+        <h2>Присоединяйтесь к Фермерской лавке</h2>
         <p>Создайте свой магазин и начните продавать свежие продукты покупателям рядом</p>
         <q-btn unelevated to="/register" class="cta-btn primary">
           <q-icon name="storefront" class="q-mr-sm" />
