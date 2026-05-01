@@ -144,6 +144,7 @@ const removeItem = async (itemId) => {
     await loadCart();
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Ошибка удаления товара' });
+    console.error(error);
   }
 };
 
@@ -158,6 +159,7 @@ const createOrder = async () => {
     router.push('/profile');
   } catch (error) {
     $q.notify({ type: 'negative', message: error.response?.data?.error || 'Ошибка оформления заказа' });
+    console.error(error);
   } finally {
     orderLoading.value = false;
   }
