@@ -139,7 +139,11 @@ const loadCategories = async () => {
 const loadProducts = async () => {
   loading.value = true;
   try {
-    const params = { search: searchQuery.value || null, category: selectedCategory.value || null, size: 50 };
+    const params = { 
+      search: searchQuery.value || null, 
+      category: selectedCategory.value?.value || null, 
+      size: 50 
+    };
     const response = await api.get('/products/public', { params });
     products.value = response.data.content;
   } catch (error) { console.error(error); } 
