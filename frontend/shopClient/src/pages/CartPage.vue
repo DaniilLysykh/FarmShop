@@ -174,6 +174,7 @@ const removeItem = async (itemId) => {
     await loadCart();
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Ошибка удаления товара' });
+    console.error(error);
   }
 };
 

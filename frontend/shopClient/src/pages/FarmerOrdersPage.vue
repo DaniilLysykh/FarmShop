@@ -97,6 +97,7 @@ const updateStatus = async (orderId, newStatus) => {
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Ошибка обновления статуса' });
     loadOrders();
+    console.error(error);
   }
 };
 
