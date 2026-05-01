@@ -47,6 +47,9 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
+import { useFormatDate } from 'src/composables/useFormatDate';
+
+const { formatDate } = useFormatDate();
 
 const orders = ref([]);
 const loading = ref(true);
@@ -69,12 +72,6 @@ const loadOrders = async () => {
   } finally {
     loading.value = false;
   }
-};
-
-const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('ru-RU', {
-    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
-  });
 };
 
 onMounted(() => loadOrders());

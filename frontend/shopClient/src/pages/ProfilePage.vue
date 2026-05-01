@@ -53,7 +53,9 @@
 import { ref, onMounted, computed } from 'vue';
 import { api } from 'boot/axios';
 import { useAuthStore } from 'stores/auth';
+import { useFormatDate } from 'src/composables/useFormatDate';
 
+const { formatDate } = useFormatDate();
 const authStore = useAuthStore();
 const userProfile = ref(null);
 
@@ -70,11 +72,4 @@ onMounted(async () => {
   }
 });
 
-// Простая функция для форматирования даты
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  return new Date(dateString).toLocaleDateString('ru-RU', {
-    day: '2-digit', month: 'long', year: 'numeric'
-  });
-};
 </script>
