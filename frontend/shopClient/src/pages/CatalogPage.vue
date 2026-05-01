@@ -75,7 +75,7 @@
               class="product-category"
             >
               <q-icon name="category" class="q-mr-xs" />
-              {{ product.category }}
+              {{ getCategoryLabel(product.category) }}
             </q-chip>
           </div>
           
@@ -111,6 +111,9 @@ import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
 import { useAuthStore } from 'stores/auth';
 import { useQuasar } from 'quasar';
+import { useCategoryLabel } from 'src/composables/useCategoryLabel';
+
+const { getCategoryLabel } = useCategoryLabel();
 
 const $q = useQuasar();
 const authStore = useAuthStore();
