@@ -47,8 +47,11 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable) // Отключаем CSRF, т.к. токены защищены сами по себе
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // REST API не должен хранить состояние
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/**").permitAll() // Доступ к регистрации и логину открыт всем
-                                .anyRequest().authenticated() // Все остальные запросы требуют токен
+                        auth.requestMatchers("/api/auth/**").permitAll()
+                                .requestMatchers("/api/products/public").permitAll() // Разрешаем всем смотреть каталог
+                                .requestMatchers("/api/categories").permitAll()      // Разрешаем всем смотреть категории
+                                .requestMatchers("/uploads/**").permitAll()          // Разрешаем всем смотреть фото товаров
+                                .anyRequest().authenticated()
                 );
 
         http.authenticationProvider(authenticationProvider());
