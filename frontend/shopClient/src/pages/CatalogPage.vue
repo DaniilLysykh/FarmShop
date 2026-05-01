@@ -67,7 +67,7 @@
         <div class="product-card" v-for="product in products" :key="product.id">
           <div class="product-image-wrapper">
             <q-img 
-              :src="product.imageUrl ? `http://localhost:8080${product.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              :src="product.imageUrl ? `http://26.151.165.100:8080${product.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
               class="product-image"
             />
             <q-chip 
