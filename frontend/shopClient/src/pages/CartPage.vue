@@ -14,7 +14,7 @@
         <q-card class="q-mb-sm" v-for="item in cartItems" :key="item.id">
           <q-card-section horizontal class="items-center">
             <q-img 
-              :src="item.imageUrl ? `http://localhost:8080${item.imageUrl}` : 'https://via.placeholder.com/150?text=Нет+фото'" 
+              :src="item.imageUrl ? `http://26.151.165.100:8080${item.imageUrl}` : 'https://via.placeholder.com/150?text=Нет+фото'" 
               style="width: 120px; height: 120px; object-fit: cover;" 
             />
             

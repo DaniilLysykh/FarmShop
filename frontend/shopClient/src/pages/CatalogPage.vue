@@ -40,7 +40,7 @@
       <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="product in products" :key="product.id">
         <q-card class="column full-height">
           <q-img 
-            :src="product.imageUrl ? `http://localhost:8080${product.imageUrl}` : 'https://via.placeholder.com/300x200?text=Нет+фото'" 
+            :src="product.imageUrl ? `http://26.151.165.100:8080${product.imageUrl}` : 'https://via.placeholder.com/300x200?text=Нет+фото'" 
             height="200px" 
           />
           

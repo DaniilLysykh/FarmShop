@@ -16,7 +16,7 @@
       <div class="col-12 col-sm-6 col-md-4 col-lg-3" v-for="item in favorites" :key="item.id">
         <q-card class="column full-height">
           <q-img 
-            :src="item.imageUrl ? `http://localhost:8080${item.imageUrl}` : 'https://via.placeholder.com/300x200?text=Нет+фото'" 
+            :src="item.imageUrl ? `http://26.151.165.100:8080${item.imageUrl}` : 'https://via.placeholder.com/300x200?text=Нет+фото'" 
             height="200px" 
           />
           
