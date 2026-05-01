@@ -127,7 +127,10 @@ const favoriteIds = ref([]);
 const loadCategories = async () => {
   try {
     const response = await api.get('/categories');
-    categories.value = response.data;
+    categories.value = response.data.map(cat => ({
+      label: getCategoryLabel(cat),
+      value: cat
+    }));
   } catch (error) {
     console.error('Ошибка загрузки категорий', error);
   }

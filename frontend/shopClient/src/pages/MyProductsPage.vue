@@ -90,8 +90,8 @@
               <q-input v-model.number="form.stock" outlined rounded type="number" placeholder="10" required />
             </div>
             <div class="form-group half">
-              <label>Категория</label>
-              <q-select v-model="form.category" :options="categories" outlined rounded placeholder="Выберите" required />
+            <label>Категория</label>
+              <q-select v-model="form.category" :options="categories" emit-value map-options outlined rounded placeholder="Выберите" required />
             </div>
           </div>
 
@@ -127,7 +127,14 @@ const products = ref([]);
 const showAddDialog = ref(false);
 const saving = ref(false);
 
-const categories = ['MILK', 'MEAT', 'VEGETABLES', 'HONEY', 'EGGS', 'BREAD'];
+const categories = [
+  { label: 'Молочные продукты', value: 'MILK' },
+  { label: 'Мясо', value: 'MEAT' },
+  { label: 'Овощи', value: 'VEGETABLES' },
+  { label: 'Мёд', value: 'HONEY' },
+  { label: 'Яйца', value: 'EGGS' },
+  { label: 'Хлебобулочные изделия', value: 'BREAD' }
+];
 
 const form = reactive({
   name: '',
