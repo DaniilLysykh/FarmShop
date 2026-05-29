@@ -1,6 +1,7 @@
 package com.farm.marketplace.service;
 
 import com.farm.marketplace.exception.AppException;
+import com.farm.marketplace.model.NotificationType;
 import com.farm.marketplace.model.*;
 import com.farm.marketplace.payload.request.OrderRequest;
 import com.farm.marketplace.payload.response.OrderItemResponse;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +29,7 @@ public class OrderService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -109,6 +113,28 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
         cartItemRepository.deleteAllByUserId(buyer.getId());
 
+        Set<User> farmersToNotify = new HashSet<>();
+        for (OrderItem item : savedOrder.getItems()) {
+            farmersToNotify.add(item.getProduct().getFarmer());
+        }
+        for (User farmer : farmersToNotify) {
+            notificationService.createNotification(
+                    farmer,
+                    NotificationType.ORDER_NEW,
+                    "Новый заказ",
+                    "Поступил заказ #" + savedOrder.getId() + " на сумму " + savedOrder.getTotalPrice() + " руб.",
+                    savedOrder.getId()
+            );
+        }
+
+        notificationService.createNotification(
+                buyer,
+                NotificationType.ORDER_STATUS,
+                "Заказ оформлен",
+                "Ваш заказ #" + savedOrder.getId() + " принят и ожидает подтверждения фермера.",
+                savedOrder.getId()
+        );
+
         // Покупатель видит весь заказ
         return mapToResponse(savedOrder, null);
     }
@@ -141,13 +167,34 @@ public class OrderService {
             throw new AppException("У вас нет прав изменять статус этого заказа", HttpStatus.FORBIDDEN);
         }
 
+        OrderStatus status;
         try {
-            OrderStatus status = OrderStatus.valueOf(newStatus.toUpperCase());
+            status = OrderStatus.valueOf(newStatus.toUpperCase());
             order.setStatus(status);
         } catch (IllegalArgumentException e) {
             throw new AppException("Неверный статус заказа", HttpStatus.BAD_REQUEST);
         }
 
-        return mapToResponse(orderRepository.save(order), farmer.getId());
+        Order saved = orderRepository.save(order);
+        String statusLabel = getStatusLabel(status);
+        notificationService.createNotification(
+                order.getUser(),
+                NotificationType.ORDER_STATUS,
+                "Статус заказа изменён",
+                "Заказ #" + saved.getId() + ": " + statusLabel,
+                saved.getId()
+        );
+
+        return mapToResponse(saved, farmer.getId());
+    }
+
+    private String getStatusLabel(OrderStatus status) {
+        return switch (status) {
+            case PENDING -> "ожидает подтверждения";
+            case ACCEPTED -> "принят в работу";
+            case READY_FOR_PICKUP -> "готов к выдаче";
+            case DELIVERED -> "выполнен";
+            case CANCELLED -> "отменён";
+        };
     }
 }

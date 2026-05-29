@@ -7,6 +7,7 @@ import com.farm.marketplace.model.User;
 import com.farm.marketplace.payload.request.ProductRequest;
 import com.farm.marketplace.payload.response.ProductResponse;
 import com.farm.marketplace.repository.ProductRepository;
+import com.farm.marketplace.repository.ReviewRepository;
 import com.farm.marketplace.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,9 +30,14 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final ReviewRepository reviewRepository;
 
     // Вспомогательный метод для маппинга сущности в DTO
     private ProductResponse mapToResponse(Product product) {
+        Double avg = reviewRepository.findAverageRatingByProductId(product.getId());
+        long reviewCount = reviewRepository.countByProductId(product.getId());
+        Double averageRating = (reviewCount > 0 && avg != null) ? Math.round(avg * 10.0) / 10.0 : null;
+
         return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
@@ -42,6 +48,8 @@ public class ProductService {
                 .category(product.getCategory())
                 .farmerId(product.getFarmer().getId())
                 .imageUrl(product.getImageUrl())
+                .averageRating(averageRating)
+                .reviewCount(reviewCount)
                 .build();
     }
 

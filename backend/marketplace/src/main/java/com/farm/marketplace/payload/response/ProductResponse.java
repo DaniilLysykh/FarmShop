@@ -20,4 +20,6 @@ public class ProductResponse {
     private Category category;
     private Long farmerId;
     private String imageUrl;
+    private Double averageRating;
+    private Long reviewCount;
 }
