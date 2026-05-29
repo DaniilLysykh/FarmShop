@@ -15,6 +15,9 @@ const routes = [
       { path: 'favorites', component: () => import('pages/FavoritesPage.vue') },
       { path: 'notifications', component: () => import('pages/NotificationsPage.vue') },
       { path: 'my-reviews', component: () => import('pages/MyReviewsPage.vue') },
+      { path: 'about', component: () => import('pages/AboutPage.vue') },
+      { path: 'contacts', component: () => import('pages/ContactsPage.vue') },
+      { path: 'delivery', component: () => import('pages/DeliveryPage.vue') },
     ],
   },
 

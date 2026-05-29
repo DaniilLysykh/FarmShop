@@ -62,9 +62,9 @@
           <span>Фермерская лавка 2026</span>
         </div>
         <div class="footer-links">
-          <span class="footer-link">О нас</span>
-          <span class="footer-link">Контакты</span>
-          <span class="footer-link">Доставка</span>
+          <router-link to="/about" class="footer-link">О нас</router-link>
+          <router-link to="/contacts" class="footer-link">Контакты</router-link>
+          <router-link to="/delivery" class="footer-link">Доставка</router-link>
         </div>
       </div>
     </q-footer>
@@ -267,12 +267,18 @@ const logout = () => {
 
 .footer-link {
   font-size: 0.875rem;
+  color: white;
+  text-decoration: none;
   opacity: 0.8;
-  cursor: pointer;
   transition: opacity 0.3s ease;
-  
+
   &:hover {
     opacity: 1;
+  }
+
+  &.router-link-active {
+    opacity: 1;
+    text-decoration: underline;
   }
 }
 </style>
