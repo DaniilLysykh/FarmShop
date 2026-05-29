@@ -150,6 +150,7 @@ const deleteReview = async () => {
     emit('review-changed');
   } catch (error) {
     $q.notify({ type: 'negative', message: 'Не удалось удалить отзыв' });
+    console.error(error);
   } finally {
     submitting.value = false;
   }
