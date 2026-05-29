@@ -49,4 +49,12 @@ public class OrderController {
                                                            Authentication authentication) {
         return ResponseEntity.ok(orderService.updateOrderStatus(id, status, authentication.getName()));
     }
+
+    // Подтвердить получение заказа (Только покупатель)
+    @PutMapping("/{id}/confirm-receipt")
+    @PreAuthorize("hasRole('CUSTOMER')")
+    public ResponseEntity<OrderResponse> confirmReceipt(@PathVariable Long id,
+                                                        Authentication authentication) {
+        return ResponseEntity.ok(orderService.confirmReceipt(id, authentication.getName()));
+    }
 }

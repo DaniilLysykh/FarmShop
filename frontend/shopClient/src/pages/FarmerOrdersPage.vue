@@ -27,16 +27,25 @@
               <h3 class="order-number">Заказ #{{ order.id }}</h3>
               <span class="order-date">{{ formatDate(order.createdAt) }}</span>
             </div>
-            <q-select 
-              v-model="order.status" 
-              :options="statusOptions" 
-              emit-value 
-              map-options 
-              dense 
+            <q-select
+              v-if="order.canFarmerUpdateStatus"
+              v-model="order.status"
+              :options="farmerStatusOptions"
+              emit-value
+              map-options
+              dense
               outlined
               class="status-select"
               @update:model-value="updateStatus(order.id, $event)"
             />
+            <q-chip
+              v-else
+              :color="getStatus(order.status).color"
+              text-color="white"
+              class="status-chip-locked"
+            >
+              {{ getStatus(order.status).label }}
+            </q-chip>
           </div>
 
           <div class="order-body">
@@ -64,20 +73,14 @@ import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
 import { useFormatDate } from 'src/composables/useFormatDate';
+import { useOrderStatus } from 'src/composables/useOrderStatus';
 
 const { formatDate } = useFormatDate();
+const { farmerStatusOptions, getStatus } = useOrderStatus();
 
 const $q = useQuasar();
 const orders = ref([]);
 const loading = ref(true);
-
-const statusOptions = [
-  { label: 'Ожидает', value: 'PENDING' },
-  { label: 'Принят', value: 'ACCEPTED' },
-  { label: 'Готов', value: 'READY_FOR_PICKUP' },
-  { label: 'Выполнен', value: 'DELIVERED' },
-  { label: 'Отменен', value: 'CANCELLED' }
-];
 
 const loadOrders = async () => {
   try {
@@ -95,7 +98,8 @@ const updateStatus = async (orderId, newStatus) => {
     await api.put(`/orders/${orderId}/status?status=${newStatus}`);
     $q.notify({ type: 'positive', message: 'Статус заказа обновлен' });
   } catch (error) {
-    $q.notify({ type: 'negative', message: 'Ошибка обновления статуса' });
+    const msg = error.response?.data?.error || 'Ошибка обновления статуса';
+    $q.notify({ type: 'negative', message: msg });
     loadOrders();
     console.error(error);
   }
@@ -245,6 +249,11 @@ onMounted(() => loadOrders());
   :deep(.q-field__label) {
     color: var(--text-secondary) !important;
   }
+}
+
+.status-chip-locked {
+  font-weight: 600;
+  flex-shrink: 0;
 }
 
 .order-body {

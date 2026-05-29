@@ -19,4 +19,6 @@ public class OrderResponse {
     private BigDecimal totalPrice;
     private LocalDateTime createdAt;
     private List<OrderItemResponse> items;
+    private boolean canFarmerUpdateStatus;
+    private boolean canCustomerConfirmReceipt;
 }
