@@ -56,6 +56,17 @@
 
       <div class="profile-actions">
         <h3 class="actions-title">Быстрые действия</h3>
+
+        <div class="action-card" @click="$router.push('/notifications')">
+          <div class="action-icon orange">
+            <q-icon name="notifications" />
+          </div>
+          <div class="action-content">
+            <h4>Уведомления</h4>
+            <p>Заказы, статусы и отзывы</p>
+          </div>
+          <q-icon name="chevron_right" class="action-arrow" />
+        </div>
         
         <template v-if="isFarmer">
           <div class="action-card" @click="$router.push('/my-products')">
@@ -82,6 +93,17 @@
         </template>
         
         <template v-else>
+          <div class="action-card" @click="$router.push('/my-reviews')">
+            <div class="action-icon amber">
+              <q-icon name="rate_review" />
+            </div>
+            <div class="action-content">
+              <h4>Мои отзывы</h4>
+              <p>Ваши оценки товаров</p>
+            </div>
+            <q-icon name="chevron_right" class="action-arrow" />
+          </div>
+
           <div class="action-card" @click="$router.push('/favorites')">
             <div class="action-icon red">
               <q-icon name="favorite" />
@@ -332,6 +354,14 @@ onMounted(async () => {
   
   &.purple {
     background: linear-gradient(135deg, #ab47bc, #7b1fa2);
+  }
+
+  &.orange {
+    background: linear-gradient(135deg, #ffb74d, #f57c00);
+  }
+
+  &.amber {
+    background: linear-gradient(135deg, #ffca28, #ff8f00);
   }
 }
 

@@ -67,7 +67,7 @@
         <div class="product-card" v-for="product in products" :key="product.id">
           <div class="product-image-wrapper">
             <q-img 
-              :src="product.imageUrl ? `http://26.151.165.100:8080${product.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              :src="mediaUrl(product.imageUrl) || 'https://via.placeholder.com/400x300?text=Нет+фото'" 
               class="product-image"
             />
             <q-chip 
@@ -81,6 +81,10 @@
           
           <div class="product-content">
             <h3 class="product-name">{{ product.name }}</h3>
+            <div class="product-rating" v-if="product.reviewCount">
+              <q-rating :model-value="product.averageRating || 0" max="5" size="16px" color="amber" readonly />
+              <span class="rating-text">{{ product.averageRating }} ({{ product.reviewCount }})</span>
+            </div>
             <p class="product-description">{{ product.description }}</p>
             
             <div class="product-footer">
@@ -89,20 +93,31 @@
                 <span class="price-unit">руб / {{ product.unit }}</span>
               </div>
               
-              <div class="product-actions" v-if="authStore.isCustomer">
-                <q-btn flat round :icon="isFavorite(product.id) ? 'favorite' : 'favorite_border'" :color="isFavorite(product.id) ? 'red' : 'grey-5'" @click="toggleFavorite(product.id)" class="action-btn">
-                  <q-tooltip>{{ isFavorite(product.id) ? 'Убрать из избранного' : 'В избранное' }}</q-tooltip>
+              <div class="product-actions">
+                <q-btn flat round icon="rate_review" color="grey-7" @click="openReviews(product)" class="action-btn">
+                  <q-tooltip>Отзывы</q-tooltip>
                 </q-btn>
-                <q-btn unelevated class="add-to-cart-btn" @click="addToCart(product.id)">
-                  <q-icon name="add_shopping_cart" />
-                  В корзину
-                </q-btn>
+                <template v-if="authStore.isCustomer">
+                  <q-btn flat round :icon="isFavorite(product.id) ? 'favorite' : 'favorite_border'" :color="isFavorite(product.id) ? 'red' : 'grey-5'" @click="toggleFavorite(product.id)" class="action-btn">
+                    <q-tooltip>{{ isFavorite(product.id) ? 'Убрать из избранного' : 'В избранное' }}</q-tooltip>
+                  </q-btn>
+                  <q-btn unelevated class="add-to-cart-btn" @click="addToCart(product.id)">
+                    <q-icon name="add_shopping_cart" />
+                    В корзину
+                  </q-btn>
+                </template>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <ProductReviewsDialog
+      v-model="reviewsDialogOpen"
+      :product="selectedProduct"
+      @review-changed="loadProducts"
+    />
   </q-page>
 </template>
 
@@ -112,6 +127,10 @@ import { api } from 'boot/axios';
 import { useAuthStore } from 'stores/auth';
 import { useQuasar } from 'quasar';
 import { useCategoryLabel } from 'src/composables/useCategoryLabel';
+import { useMediaUrl } from 'src/composables/useMediaUrl';
+import ProductReviewsDialog from 'components/ProductReviewsDialog.vue';
+
+const { mediaUrl } = useMediaUrl();
 
 const { getCategoryLabel } = useCategoryLabel();
 
@@ -123,6 +142,8 @@ const loading = ref(false);
 const searchQuery = ref('');
 const selectedCategory = ref(null);
 const favoriteIds = ref([]);
+const reviewsDialogOpen = ref(false);
+const selectedProduct = ref(null);
 
 const loadCategories = async () => {
   try {
@@ -182,6 +203,11 @@ const toggleFavorite = async (productId) => {
     $q.notify({ type: 'negative', message: 'Ошибка обновления избранного' });
     console.error(error);
   }
+};
+
+const openReviews = (product) => {
+  selectedProduct.value = product;
+  reviewsDialogOpen.value = true;
 };
 
 const addToCart = async (productId) => {
@@ -421,6 +447,18 @@ watch(searchQuery, () => {
 
 .product-content {
   padding: 20px;
+}
+
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+
+  .rating-text {
+    font-size: 0.8rem;
+    color: #888;
+  }
 }
 
 .product-name {

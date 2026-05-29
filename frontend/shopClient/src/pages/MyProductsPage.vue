@@ -46,6 +46,10 @@
           
           <div class="card-content">
             <h3 class="card-title">{{ product.name }}</h3>
+            <div v-if="product.reviewCount" class="card-rating">
+              <q-rating :model-value="product.averageRating || 0" max="5" size="14px" color="amber" readonly />
+              <span>{{ product.averageRating }} ({{ product.reviewCount }})</span>
+            </div>
             <p class="card-description">{{ product.description }}</p>
             
             <div class="card-meta">
@@ -477,6 +481,15 @@ onMounted(() => {
   font-weight: 600;
   color: #1a1a1a;
   margin: 0 0 8px;
+}
+
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  color: #888;
 }
 
 .card-description {

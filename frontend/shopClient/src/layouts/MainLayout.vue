@@ -24,8 +24,10 @@
               <q-tooltip>Корзина</q-tooltip>
             </q-btn>
             
-            <q-btn flat round icon="notifications" class="action-btn q-mr-sm">
-              <q-badge color="orange" floating rounded>2</q-badge>
+            <q-btn flat round icon="notifications" class="action-btn q-mr-sm" to="/notifications">
+              <q-badge v-if="notificationsStore.unreadCount > 0" color="orange" floating rounded>
+                {{ notificationsStore.unreadCount > 9 ? '9+' : notificationsStore.unreadCount }}
+              </q-badge>
               <q-tooltip>Уведомления</q-tooltip>
             </q-btn>
             
@@ -70,14 +72,54 @@
 </template>
 
 <script setup>
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useAuthStore } from 'stores/auth';
+import { useNotificationsStore } from 'stores/notifications';
 import { useRouter } from 'vue-router';
 
 const authStore = useAuthStore();
+const notificationsStore = useNotificationsStore();
 const router = useRouter();
+
+let pollTimer = null;
+
+const startPolling = () => {
+  if (pollTimer) return;
+  notificationsStore.fetchUnreadCount();
+  pollTimer = setInterval(() => {
+    notificationsStore.fetchUnreadCount();
+  }, 60000);
+};
+
+const stopPolling = () => {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+};
+
+watch(
+  () => authStore.isLoggedIn,
+  (loggedIn) => {
+    if (loggedIn) {
+      startPolling();
+    } else {
+      stopPolling();
+      notificationsStore.reset();
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  if (authStore.isLoggedIn) startPolling();
+});
+
+onUnmounted(stopPolling);
 
 const logout = () => {
   authStore.logout();
+  notificationsStore.reset();
   router.push('/login');
 };
 </script>

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
+import { api } from 'boot/axios';
 
 export const useAuthStore = defineStore('auth', () => {
   // --- Состояние (State) ---
@@ -31,6 +32,7 @@ export const useAuthStore = defineStore('auth', () => {
     localStorage.removeItem('token');
     localStorage.removeItem('roles');
     localStorage.removeItem('email');
+    delete api.defaults.headers.common['Authorization'];
   }
 
   return {
