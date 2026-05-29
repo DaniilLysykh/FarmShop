@@ -30,7 +30,7 @@
         <div class="product-card" v-for="product in products" :key="product.id">
           <div class="card-image-wrapper">
             <q-img 
-              :src="product.imageUrl ? `http://26.151.165.100:8080${product.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              :src="productImage(product.imageUrl)" 
               class="card-image"
             />
             <q-chip size="sm" class="category-chip">{{ getCategoryLabel(product.category) }}</q-chip>
@@ -188,8 +188,10 @@ import { ref, reactive, onMounted } from 'vue';
 import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
 import { useCategoryLabel } from 'src/composables/useCategoryLabel';
+import { useMediaUrl } from 'src/composables/useMediaUrl';
 
 const { getCategoryLabel } = useCategoryLabel();
+const { productImage } = useMediaUrl();
 
 const $q = useQuasar();
 const products = ref([]);

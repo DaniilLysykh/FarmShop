@@ -28,7 +28,7 @@
         <div class="favorite-card" v-for="item in favorites" :key="item.id">
           <div class="card-image-wrapper">
             <q-img 
-              :src="item.imageUrl ? `http://26.151.165.100:8080${item.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              :src="productImage(item.imageUrl)" 
               class="card-image"
             />
             <q-btn round flat icon="favorite" color="red" class="fav-btn" @click="removeFromFavorites(item.id)">
@@ -55,7 +55,9 @@
 import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
+import { useMediaUrl } from 'src/composables/useMediaUrl';
 
+const { productImage } = useMediaUrl();
 const $q = useQuasar();
 const favorites = ref([]);
 const loading = ref(true);

@@ -1,13 +1,23 @@
-import { api } from 'boot/axios';
+import { apiOrigin, placeholderImageUrl, placeholderImageSmallUrl } from 'src/config/env';
 
 export function useMediaUrl() {
-  const serverBase = (api.defaults.baseURL || '').replace(/\/api\/?$/, '');
-
   const mediaUrl = (path) => {
     if (!path) return null;
     if (path.startsWith('http')) return path;
-    return `${serverBase}${path}`;
+    return `${apiOrigin}${path}`;
   };
 
-  return { serverBase, mediaUrl };
+  const productImage = (path, size = 'large') => {
+    const resolved = mediaUrl(path);
+    if (resolved) return resolved;
+    return size === 'small' ? placeholderImageSmallUrl : placeholderImageUrl;
+  };
+
+  return {
+    apiOrigin,
+    mediaUrl,
+    productImage,
+    placeholderImageUrl,
+    placeholderImageSmallUrl,
+  };
 }

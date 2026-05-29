@@ -24,7 +24,7 @@
         <div class="cart-items">
           <div class="cart-item" v-for="item in cartItems" :key="item.id">
             <q-img 
-              :src="item.imageUrl ? `http://26.151.165.100:8080${item.imageUrl}` : 'https://via.placeholder.com/150?text=Нет+фото'" 
+              :src="productImage(item.imageUrl, 'small')" 
               class="item-image"
             />
             
@@ -122,7 +122,9 @@ import { ref, computed, onMounted, reactive } from 'vue';
 import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
+import { useMediaUrl } from 'src/composables/useMediaUrl';
 
+const { productImage } = useMediaUrl();
 const $q = useQuasar();
 const router = useRouter();
 

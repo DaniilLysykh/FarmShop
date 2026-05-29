@@ -67,7 +67,7 @@
         <div class="product-card" v-for="product in products" :key="product.id">
           <div class="product-image-wrapper">
             <q-img 
-              :src="mediaUrl(product.imageUrl) || 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              :src="productImage(product.imageUrl)" 
               class="product-image"
             />
             <q-chip 
@@ -130,7 +130,7 @@ import { useCategoryLabel } from 'src/composables/useCategoryLabel';
 import { useMediaUrl } from 'src/composables/useMediaUrl';
 import ProductReviewsDialog from 'components/ProductReviewsDialog.vue';
 
-const { mediaUrl } = useMediaUrl();
+const { productImage } = useMediaUrl();
 
 const { getCategoryLabel } = useCategoryLabel();
 
