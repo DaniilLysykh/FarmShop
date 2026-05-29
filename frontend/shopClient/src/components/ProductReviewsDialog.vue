@@ -197,7 +197,7 @@ watch(
 }
 
 .review-form-section {
-  background: #f5f7f5;
+  background: var(--bg-muted);
 }
 
 .form-title {

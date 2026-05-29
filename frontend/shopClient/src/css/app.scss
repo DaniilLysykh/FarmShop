@@ -6,13 +6,32 @@
   --accent-orange: #ff9800;
   --bg-page: #f5f7f5;
   --bg-card: #ffffff;
+  --bg-muted: #f0f0f0;
+  --bg-subtle: #f8f9fa;
   --text-primary: #1a1a1a;
   --text-secondary: #5a5a5a;
+  --text-muted: #888888;
+  --border-color: rgba(0, 0, 0, 0.06);
   --border-radius: 16px;
   --border-radius-sm: 10px;
   --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 12px 32px rgba(46, 125, 50, 0.18);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --auth-gradient: linear-gradient(135deg, #e8f5e9 0%, #f5f7f5 100%);
+}
+
+body.body--dark {
+  --bg-page: #0f1410;
+  --bg-card: #1a231c;
+  --bg-muted: #243028;
+  --bg-subtle: #1e2820;
+  --text-primary: #e8f0e9;
+  --text-secondary: #a8b5aa;
+  --text-muted: #7a8a7e;
+  --border-color: rgba(255, 255, 255, 0.08);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --auth-gradient: linear-gradient(135deg, #1a2e1c 0%, #0f1410 100%);
 }
 
 // ========== Base Styles ==========
@@ -180,15 +199,157 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--bg-muted);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--text-muted);
   border-radius: 4px;
-  
+
   &:hover {
-    background: #a1a1a1;
+    opacity: 0.85;
+  }
+}
+
+// ========== Dark theme: страницы и карточки ==========
+body.body--dark {
+  .q-page.home-page,
+  .q-page.catalog-page,
+  .q-page.cart-page,
+  .q-page.profile-page,
+  .q-page.orders-page,
+  .q-page.farmer-orders-page,
+  .q-page.favorites-page,
+  .q-page.products-page,
+  .q-page.notifications-page,
+  .q-page.reviews-page,
+  .q-page.info-page,
+  .q-page.auth-page {
+    background: var(--bg-page) !important;
+  }
+
+  .auth-page {
+    background: var(--auth-gradient) !important;
+  }
+
+  .product-card,
+  .order-card,
+  .profile-card,
+  .info-card,
+  .favorite-card,
+  .notification-card,
+  .review-card,
+  .feature-card,
+  .auth-card,
+  .catalog-header,
+  .cart-summary,
+  .dialog-card,
+  .action-card,
+  .search-input :deep(.q-field__control),
+  .category-filter :deep(.q-field__control) {
+    background: var(--bg-card) !important;
+    color: var(--text-primary);
+    border-color: var(--border-color);
+  }
+
+  .empty-state,
+  .loading-state {
+    background: var(--bg-card) !important;
+  }
+
+  .product-name,
+  .card-title,
+  .catalog-title,
+  .page-title,
+  .profile-email,
+  .order-number,
+  .notification-title,
+  .info-card h2,
+  .auth-title,
+  .empty-title,
+  .actions-title,
+  .feature-card h3,
+  .cta-content h2 {
+    color: var(--text-primary) !important;
+  }
+
+  .product-description,
+  .product-count,
+  .page-subtitle,
+  .detail-label,
+  .notification-message,
+  .notification-date,
+  .review-date,
+  .footer-text,
+  .empty-text,
+  .rating-text,
+  .price-unit,
+  .card-description,
+  .action-content p,
+  .feature-card p,
+  .cta-content p,
+  .info-card p,
+  .info-card li {
+    color: var(--text-secondary) !important;
+  }
+
+  .detail-value,
+  .item-name,
+  .item-qty,
+  .review-author {
+    color: var(--text-primary) !important;
+  }
+
+  .detail-row,
+  .review-item,
+  .form-group label {
+    border-color: var(--border-color);
+  }
+
+  .detail-icon,
+  .action-icon:not([class*='green']):not([class*='blue']):not([class*='red']):not([class*='purple']):not([class*='orange']):not([class*='amber']) {
+    background: var(--bg-muted) !important;
+
+    .q-icon {
+      color: var(--text-secondary) !important;
+    }
+  }
+
+  .product-category,
+  .category-chip {
+    background: var(--bg-card) !important;
+    color: var(--primary-green-light) !important;
+  }
+
+  .reviews-dialog {
+    background: var(--bg-card) !important;
+    color: var(--text-primary);
+  }
+
+  .review-form-section {
+    background: var(--bg-muted) !important;
+  }
+
+  .form-label,
+  .form-title,
+  .list-title,
+  .dialog-title {
+    color: var(--text-primary) !important;
+  }
+
+  .status-select :deep(.q-field__control) {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .items-section,
+  .address-row,
+  .order-details {
+    color: var(--text-secondary);
+  }
+
+  .cta-section {
+    background: linear-gradient(135deg, #1b5e20 0%, #0d3d12 100%) !important;
   }
 }

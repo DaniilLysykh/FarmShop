@@ -16,6 +16,14 @@
     <link rel="icon" type="image/ico" href="favicon.ico">
   </head>
   <body>
+    <script>
+      try {
+        if (localStorage.getItem('farmshop-theme') === 'dark') {
+          document.body.classList.add('body--dark');
+          document.body.style.backgroundColor = '#0f1410';
+        }
+      } catch (e) {}
+    </script>
     <!-- quasar:entry-point -->
   </body>
 </html>

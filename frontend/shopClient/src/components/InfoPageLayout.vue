@@ -26,7 +26,7 @@ defineProps({
 
 <style scoped lang="scss">
 .info-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -74,17 +74,17 @@ defineProps({
 }
 
 .info-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 32px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
   line-height: 1.65;
-  color: #444;
+  color: var(--text-secondary);
 
   :deep(h2) {
     font-size: 1.15rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin: 28px 0 12px;
 
     &:first-child {
@@ -111,7 +111,7 @@ defineProps({
     align-items: flex-start;
     gap: 14px;
     padding: 14px 0;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid var(--border-color);
 
     &:last-child {
       border-bottom: none;
@@ -126,13 +126,13 @@ defineProps({
 
   :deep(.info-row__label) {
     font-size: 0.8rem;
-    color: #888;
+    color: var(--text-muted);
     margin-bottom: 2px;
   }
 
   :deep(.info-row__value) {
     font-weight: 500;
-    color: #333;
+    color: var(--text-primary);
   }
 
   :deep(a) {

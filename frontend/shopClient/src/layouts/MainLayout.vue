@@ -19,6 +19,8 @@
         </nav>
 
         <div class="header-actions">
+          <ThemeToggle />
+
           <template v-if="authStore.isLoggedIn">
             <q-btn v-if="authStore.isCustomer" flat round icon="shopping_cart" to="/cart" class="action-btn">
               <q-tooltip>Корзина</q-tooltip>
@@ -75,10 +77,13 @@
 import { onMounted, onUnmounted, watch } from 'vue';
 import { useAuthStore } from 'stores/auth';
 import { useNotificationsStore } from 'stores/notifications';
+import { useThemeStore } from 'stores/theme';
 import { useRouter } from 'vue-router';
+import ThemeToggle from 'components/ThemeToggle.vue';
 
 const authStore = useAuthStore();
 const notificationsStore = useNotificationsStore();
+const themeStore = useThemeStore();
 const router = useRouter();
 
 let pollTimer = null;
@@ -112,6 +117,7 @@ watch(
 );
 
 onMounted(() => {
+  themeStore.init();
   if (authStore.isLoggedIn) startPolling();
 });
 
