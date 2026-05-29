@@ -48,7 +48,7 @@ public class NotificationService {
                 .title(title)
                 .message(message)
                 .referenceId(referenceId)
-                .read(false)
+                .isRead(false)
                 .build();
         notificationRepository.save(notification);
     }
@@ -62,7 +62,7 @@ public class NotificationService {
 
     public UnreadCountResponse getUnreadCount(String email) {
         User user = getUserByEmail(email);
-        long count = notificationRepository.countByUserIdAndReadFalse(user.getId());
+        long count = notificationRepository.countByUserIdAndIsReadFalse(user.getId());
         return new UnreadCountResponse(count);
     }
 
@@ -76,7 +76,7 @@ public class NotificationService {
             throw new AppException("Нет доступа", HttpStatus.FORBIDDEN);
         }
 
-        notification.setRead(true);
+        notification.setIsRead(true);
         return mapToResponse(notificationRepository.save(notification));
     }
 
@@ -85,6 +85,6 @@ public class NotificationService {
         User user = getUserByEmail(email);
         notificationRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId()).stream()
                 .filter(n -> !n.isRead())
-                .forEach(n -> n.setRead(true));
+                .forEach(n -> n.setIsRead(true));
     }
 }

@@ -38,9 +38,9 @@ public class Notification {
     @Column(name = "reference_id")
     private Long referenceId;
 
-    @Column(nullable = false)
+    @Column(name = "is_read", nullable = false)
     @Builder.Default
-    private boolean read = false;
+    private boolean isRead = false;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
