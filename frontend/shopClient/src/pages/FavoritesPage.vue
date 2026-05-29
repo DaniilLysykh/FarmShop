@@ -102,7 +102,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .favorites-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -143,7 +143,7 @@ onMounted(() => {
 }
 
 .empty-state {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 80px 40px;
   text-align: center;
@@ -193,7 +193,7 @@ onMounted(() => {
 }
 
 .favorite-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
@@ -219,7 +219,7 @@ onMounted(() => {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: white;
+  background: var(--bg-card);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
 

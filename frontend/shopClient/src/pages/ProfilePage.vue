@@ -155,7 +155,7 @@ onMounted(async () => {
 
 <style scoped lang="scss">
 .profile-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -202,10 +202,11 @@ onMounted(async () => {
 }
 
 .profile-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
 }
 
 .profile-header {
@@ -237,7 +238,7 @@ onMounted(async () => {
 .profile-email {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0 0 8px;
 }
 
@@ -263,7 +264,7 @@ onMounted(async () => {
 .detail-icon {
   width: 44px;
   height: 44px;
-  background: #f5f7f5;
+  background: var(--bg-muted);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -271,7 +272,7 @@ onMounted(async () => {
   
   .q-icon {
     font-size: 22px;
-    color: #666;
+    color: var(--text-secondary);
   }
 }
 
@@ -283,13 +284,13 @@ onMounted(async () => {
 
 .detail-label {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-muted);
   margin-bottom: 4px;
 }
 
 .detail-value {
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .loading-state {
@@ -305,7 +306,7 @@ onMounted(async () => {
 .actions-title {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 16px;
 }
 
@@ -313,11 +314,12 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
   cursor: pointer;
   transition: all 0.3s ease;
   
@@ -371,13 +373,13 @@ onMounted(async () => {
   h4 {
     font-size: 1rem;
     font-weight: 600;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin: 0 0 4px;
   }
   
   p {
     font-size: 0.85rem;
-    color: #888;
+    color: var(--text-muted);
     margin: 0;
   }
 }

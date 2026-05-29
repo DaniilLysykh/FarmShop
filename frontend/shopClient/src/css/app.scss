@@ -8,7 +8,9 @@
   --bg-card: #ffffff;
   --bg-muted: #f0f0f0;
   --bg-subtle: #f8f9fa;
+  --bg-elevated: #ffffff;
   --text-primary: #1a1a1a;
+  --text-accent: #2e7d32;
   --text-secondary: #5a5a5a;
   --text-muted: #888888;
   --border-color: rgba(0, 0, 0, 0.06);
@@ -22,16 +24,18 @@
 
 body.body--dark {
   --bg-page: #0f1410;
-  --bg-card: #1a231c;
-  --bg-muted: #243028;
-  --bg-subtle: #1e2820;
-  --text-primary: #e8f0e9;
-  --text-secondary: #a8b5aa;
-  --text-muted: #7a8a7e;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.5);
-  --auth-gradient: linear-gradient(135deg, #1a2e1c 0%, #0f1410 100%);
+  --bg-card: #1c261e;
+  --bg-muted: #252f27;
+  --bg-subtle: #212b23;
+  --bg-elevated: #2a362c;
+  --text-primary: #eef4ef;
+  --text-secondary: #b4c0b6;
+  --text-muted: #849088;
+  --text-accent: #81c784;
+  --border-color: rgba(255, 255, 255, 0.1);
+  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --auth-gradient: linear-gradient(135deg, #152218 0%, #0f1410 50%, #0a0e0b 100%);
 }
 
 // ========== Base Styles ==========
@@ -56,7 +60,7 @@ body {
   background: var(--bg-card);
   border-radius: var(--border-radius);
   box-shadow: var(--shadow-card);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid var(--border-color);
   transition: var(--transition);
   
   &:hover {
@@ -212,144 +216,4 @@ body {
   }
 }
 
-// ========== Dark theme: страницы и карточки ==========
-body.body--dark {
-  .q-page.home-page,
-  .q-page.catalog-page,
-  .q-page.cart-page,
-  .q-page.profile-page,
-  .q-page.orders-page,
-  .q-page.farmer-orders-page,
-  .q-page.favorites-page,
-  .q-page.products-page,
-  .q-page.notifications-page,
-  .q-page.reviews-page,
-  .q-page.info-page,
-  .q-page.auth-page {
-    background: var(--bg-page) !important;
-  }
-
-  .auth-page {
-    background: var(--auth-gradient) !important;
-  }
-
-  .product-card,
-  .order-card,
-  .profile-card,
-  .info-card,
-  .favorite-card,
-  .notification-card,
-  .review-card,
-  .feature-card,
-  .auth-card,
-  .catalog-header,
-  .cart-summary,
-  .dialog-card,
-  .action-card,
-  .search-input :deep(.q-field__control),
-  .category-filter :deep(.q-field__control) {
-    background: var(--bg-card) !important;
-    color: var(--text-primary);
-    border-color: var(--border-color);
-  }
-
-  .empty-state,
-  .loading-state {
-    background: var(--bg-card) !important;
-  }
-
-  .product-name,
-  .card-title,
-  .catalog-title,
-  .page-title,
-  .profile-email,
-  .order-number,
-  .notification-title,
-  .info-card h2,
-  .auth-title,
-  .empty-title,
-  .actions-title,
-  .feature-card h3,
-  .cta-content h2 {
-    color: var(--text-primary) !important;
-  }
-
-  .product-description,
-  .product-count,
-  .page-subtitle,
-  .detail-label,
-  .notification-message,
-  .notification-date,
-  .review-date,
-  .footer-text,
-  .empty-text,
-  .rating-text,
-  .price-unit,
-  .card-description,
-  .action-content p,
-  .feature-card p,
-  .cta-content p,
-  .info-card p,
-  .info-card li {
-    color: var(--text-secondary) !important;
-  }
-
-  .detail-value,
-  .item-name,
-  .item-qty,
-  .review-author {
-    color: var(--text-primary) !important;
-  }
-
-  .detail-row,
-  .review-item,
-  .form-group label {
-    border-color: var(--border-color);
-  }
-
-  .detail-icon,
-  .action-icon:not([class*='green']):not([class*='blue']):not([class*='red']):not([class*='purple']):not([class*='orange']):not([class*='amber']) {
-    background: var(--bg-muted) !important;
-
-    .q-icon {
-      color: var(--text-secondary) !important;
-    }
-  }
-
-  .product-category,
-  .category-chip {
-    background: var(--bg-card) !important;
-    color: var(--primary-green-light) !important;
-  }
-
-  .reviews-dialog {
-    background: var(--bg-card) !important;
-    color: var(--text-primary);
-  }
-
-  .review-form-section {
-    background: var(--bg-muted) !important;
-  }
-
-  .form-label,
-  .form-title,
-  .list-title,
-  .dialog-title {
-    color: var(--text-primary) !important;
-  }
-
-  .status-select :deep(.q-field__control) {
-    background: var(--bg-card) !important;
-    color: var(--text-primary) !important;
-  }
-
-  .items-section,
-  .address-row,
-  .order-details {
-    color: var(--text-secondary);
-  }
-
-  .cta-section {
-    background: linear-gradient(135deg, #1b5e20 0%, #0d3d12 100%) !important;
-  }
-}
+@import './theme-dark.scss';

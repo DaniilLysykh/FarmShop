@@ -125,7 +125,7 @@ const onSubmit = async () => {
 <style scoped lang="scss">
 .auth-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #e8f5e9 0%, #f5f7f5 100%);
+  background: var(--auth-gradient);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,10 +134,11 @@ const onSubmit = async () => {
 
 .auth-container {
   display: flex;
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
   max-width: 1000px;
   width: 100%;
 }
@@ -171,12 +172,12 @@ const onSubmit = async () => {
 .auth-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0 0 8px;
 }
 
 .auth-subtitle {
-  color: #666;
+  color: var(--text-secondary);
   margin: 0;
   font-size: 0.95rem;
 }
@@ -193,7 +194,7 @@ const onSubmit = async () => {
 .form-label {
   display: block;
   font-weight: 500;
-  color: #333;
+  color: var(--text-primary);
   margin-bottom: 8px;
   font-size: 0.9rem;
 }
@@ -237,12 +238,12 @@ const onSubmit = async () => {
 }
 
 .footer-text {
-  color: #666;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
 .footer-link {
-  color: #2e7d32;
+  color: var(--text-accent);
   font-weight: 600;
   text-decoration: none;
   

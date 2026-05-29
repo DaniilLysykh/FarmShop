@@ -125,7 +125,7 @@ onMounted(load);
 
 <style scoped lang="scss">
 .notifications-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -175,7 +175,7 @@ onMounted(load);
   display: flex;
   align-items: flex-start;
   gap: 16px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -245,7 +245,7 @@ onMounted(load);
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
 
   h2 {

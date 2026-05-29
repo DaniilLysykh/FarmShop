@@ -200,7 +200,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .cart-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -235,17 +235,18 @@ onMounted(() => {
 }
 
 .empty-state {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 80px 40px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
 }
 
 .empty-icon {
   width: 120px;
   height: 120px;
-  background: #f0f0f0;
+  background: var(--bg-muted);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -254,19 +255,19 @@ onMounted(() => {
   
   .q-icon {
     font-size: 60px;
-    color: #ccc;
+    color: var(--text-muted);
   }
 }
 
 .empty-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #333;
+  color: var(--text-primary);
   margin: 0 0 8px;
 }
 
 .empty-text {
-  color: #888;
+  color: var(--text-muted);
   margin: 0 0 24px;
 }
 
@@ -285,10 +286,11 @@ onMounted(() => {
 }
 
 .cart-items {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 24px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
 }
 
 .cart-item {
@@ -296,7 +298,7 @@ onMounted(() => {
   align-items: center;
   gap: 20px;
   padding: 20px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-color);
   
   &:last-child {
     border-bottom: none;
@@ -317,12 +319,12 @@ onMounted(() => {
 .item-name {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0 0 4px;
 }
 
 .item-price {
-  color: #888;
+  color: var(--text-muted);
   margin: 0;
 }
 
@@ -330,13 +332,13 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #f5f7f5;
+  background: var(--bg-muted);
   padding: 8px 16px;
   border-radius: 12px;
 }
 
 .qty-btn {
-  color: #2e7d32;
+  color: var(--text-accent);
 }
 
 .qty-value {
@@ -349,7 +351,7 @@ onMounted(() => {
 .item-total {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #2e7d32;
+  color: var(--text-accent);
   min-width: 120px;
   text-align: right;
 }
@@ -364,16 +366,17 @@ onMounted(() => {
 }
 
 .summary-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 32px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
 }
 
 .summary-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0 0 24px;
 }
 
@@ -381,7 +384,7 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .summary-value {
@@ -397,7 +400,7 @@ onMounted(() => {
 }
 
 .total-value {
-  color: #2e7d32;
+  color: var(--text-accent);
 }
 
 .order-form {
@@ -410,7 +413,7 @@ onMounted(() => {
   label {
     display: block;
     font-weight: 500;
-    color: #333;
+    color: var(--text-primary);
     margin-bottom: 8px;
     font-size: 0.9rem;
   }

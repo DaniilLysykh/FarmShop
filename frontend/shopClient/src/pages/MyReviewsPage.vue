@@ -75,7 +75,7 @@ onMounted(loadReviews);
 
 <style scoped lang="scss">
 .reviews-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -103,7 +103,7 @@ onMounted(loadReviews);
 }
 
 .review-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 12px;
@@ -147,7 +147,7 @@ onMounted(loadReviews);
 .empty-state {
   text-align: center;
   padding: 60px 20px;
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
 }
 

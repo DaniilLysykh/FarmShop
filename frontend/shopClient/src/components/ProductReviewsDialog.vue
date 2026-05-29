@@ -189,10 +189,10 @@ watch(
   gap: 8px;
   margin-top: 6px;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-secondary);
 
   &.muted {
-    color: #999;
+    color: var(--text-muted);
   }
 }
 
@@ -222,7 +222,7 @@ watch(
 
 .review-item {
   padding: 12px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .review-meta {
@@ -239,16 +239,16 @@ watch(
 
 .review-date {
   font-size: 0.75rem;
-  color: #999;
+  color: var(--text-muted);
 }
 
 .review-text {
   margin: 8px 0 0;
   font-size: 0.9rem;
-  color: #444;
+  color: var(--text-secondary);
 
   &.muted {
-    color: #aaa;
+    color: var(--text-muted);
     font-style: italic;
   }
 }
@@ -257,6 +257,6 @@ watch(
 .empty-reviews {
   text-align: center;
   padding: 24px;
-  color: #888;
+  color: var(--text-muted);
 }
 </style>

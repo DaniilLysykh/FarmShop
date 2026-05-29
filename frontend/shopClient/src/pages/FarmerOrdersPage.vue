@@ -106,7 +106,7 @@ onMounted(() => loadOrders());
 
 <style scoped lang="scss">
 .farmer-orders-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -145,7 +145,7 @@ onMounted(() => loadOrders());
 }
 
 .empty-state {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 80px 40px;
   text-align: center;
@@ -187,7 +187,7 @@ onMounted(() => loadOrders());
 }
 
 .order-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
