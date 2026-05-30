@@ -67,7 +67,7 @@
         <div class="product-card" v-for="product in products" :key="product.id">
           <div class="product-image-wrapper">
             <q-img 
-              :src="product.imageUrl ? `http://26.151.165.100:8080${product.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              :src="productImage(product.imageUrl)" 
               class="product-image"
             />
             <q-chip 
@@ -81,6 +81,10 @@
           
           <div class="product-content">
             <h3 class="product-name">{{ product.name }}</h3>
+            <div class="product-rating" v-if="product.reviewCount">
+              <q-rating :model-value="product.averageRating || 0" max="5" size="16px" color="amber" readonly />
+              <span class="rating-text">{{ product.averageRating }} ({{ product.reviewCount }})</span>
+            </div>
             <p class="product-description">{{ product.description }}</p>
             
             <div class="product-footer">
@@ -89,20 +93,31 @@
                 <span class="price-unit">руб / {{ product.unit }}</span>
               </div>
               
-              <div class="product-actions" v-if="authStore.isCustomer">
-                <q-btn flat round :icon="isFavorite(product.id) ? 'favorite' : 'favorite_border'" :color="isFavorite(product.id) ? 'red' : 'grey-5'" @click="toggleFavorite(product.id)" class="action-btn">
-                  <q-tooltip>{{ isFavorite(product.id) ? 'Убрать из избранного' : 'В избранное' }}</q-tooltip>
+              <div class="product-actions">
+                <q-btn flat round icon="rate_review" color="grey-7" @click="openReviews(product)" class="action-btn">
+                  <q-tooltip>Отзывы</q-tooltip>
                 </q-btn>
-                <q-btn unelevated class="add-to-cart-btn" @click="addToCart(product.id)">
-                  <q-icon name="add_shopping_cart" />
-                  В корзину
-                </q-btn>
+                <template v-if="authStore.isCustomer">
+                  <q-btn flat round :icon="isFavorite(product.id) ? 'favorite' : 'favorite_border'" :color="isFavorite(product.id) ? 'red' : 'grey-5'" @click="toggleFavorite(product.id)" class="action-btn">
+                    <q-tooltip>{{ isFavorite(product.id) ? 'Убрать из избранного' : 'В избранное' }}</q-tooltip>
+                  </q-btn>
+                  <q-btn unelevated class="add-to-cart-btn" @click="addToCart(product.id)">
+                    <q-icon name="add_shopping_cart" />
+                    В корзину
+                  </q-btn>
+                </template>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <ProductReviewsDialog
+      v-model="reviewsDialogOpen"
+      :product="selectedProduct"
+      @review-changed="loadProducts"
+    />
   </q-page>
 </template>
 
@@ -112,6 +127,10 @@ import { api } from 'boot/axios';
 import { useAuthStore } from 'stores/auth';
 import { useQuasar } from 'quasar';
 import { useCategoryLabel } from 'src/composables/useCategoryLabel';
+import { useMediaUrl } from 'src/composables/useMediaUrl';
+import ProductReviewsDialog from 'components/ProductReviewsDialog.vue';
+
+const { productImage } = useMediaUrl();
 
 const { getCategoryLabel } = useCategoryLabel();
 
@@ -123,6 +142,8 @@ const loading = ref(false);
 const searchQuery = ref('');
 const selectedCategory = ref(null);
 const favoriteIds = ref([]);
+const reviewsDialogOpen = ref(false);
+const selectedProduct = ref(null);
 
 const loadCategories = async () => {
   try {
@@ -184,6 +205,11 @@ const toggleFavorite = async (productId) => {
   }
 };
 
+const openReviews = (product) => {
+  selectedProduct.value = product;
+  reviewsDialogOpen.value = true;
+};
+
 const addToCart = async (productId) => {
   try {
     await api.post('/cart/add', { productId: productId, quantity: 1 });
@@ -212,7 +238,7 @@ watch(searchQuery, () => {
 
 <style scoped lang="scss">
 .catalog-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -266,7 +292,7 @@ watch(searchQuery, () => {
 }
 
 .search-input {
-  background: white;
+  background: var(--bg-card);
   border-radius: 16px;
   
   :deep(.q-field__control) {
@@ -342,10 +368,11 @@ watch(searchQuery, () => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 32px;
-  background: white;
+  background: var(--bg-card);
   padding: 24px;
   border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
 }
 
 .catalog-title-section {
@@ -357,12 +384,12 @@ watch(searchQuery, () => {
 .catalog-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0;
 }
 
 .product-count {
-  color: #888;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
@@ -381,10 +408,11 @@ watch(searchQuery, () => {
 }
 
 .product-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   
   &:hover {
@@ -413,8 +441,8 @@ watch(searchQuery, () => {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: white;
-  color: #2e7d32;
+  background: var(--bg-elevated);
+  color: var(--text-accent);
   font-weight: 600;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -423,10 +451,22 @@ watch(searchQuery, () => {
   padding: 20px;
 }
 
+.product-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+
+  .rating-text {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+}
+
 .product-name {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0 0 8px;
   white-space: nowrap;
   overflow: hidden;
@@ -435,7 +475,7 @@ watch(searchQuery, () => {
 
 .product-description {
   font-size: 0.875rem;
-  color: #666;
+  color: var(--text-secondary);
   margin: 0 0 16px;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -458,12 +498,12 @@ watch(searchQuery, () => {
 .price-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2e7d32;
+  color: var(--text-accent);
 }
 
 .price-unit {
   font-size: 0.8rem;
-  color: #888;
+  color: var(--text-muted);
 }
 
 .product-actions {
@@ -514,24 +554,25 @@ watch(searchQuery, () => {
   justify-content: center;
   padding: 80px 20px;
   text-align: center;
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
+  border: 1px solid var(--border-color);
   
   &__icon {
     font-size: 80px;
     opacity: 0.3;
-    color: #888;
+    color: var(--text-muted);
   }
   
   &__title {
     font-size: 1.25rem;
     font-weight: 600;
-    color: #333;
+    color: var(--text-primary);
     margin: 20px 0 8px;
   }
   
   &__text {
-    color: #888;
+    color: var(--text-muted);
   }
 }
 

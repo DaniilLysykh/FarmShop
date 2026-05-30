@@ -75,7 +75,7 @@
 
 <style scoped lang="scss">
 .home-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -204,27 +204,28 @@
 }
 
 .feature-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 40px;
   text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
   transition: all 0.3s ease;
   
   &:hover {
     transform: translateY(-8px);
-    box-shadow: 0 16px 40px rgba(46, 125, 50, 0.12);
+    box-shadow: var(--shadow-hover);
   }
   
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: var(--text-primary);
     margin: 20px 0 12px;
   }
   
   p {
-    color: #666;
+    color: var(--text-secondary);
     font-size: 0.95rem;
     margin: 0;
     line-height: 1.5;

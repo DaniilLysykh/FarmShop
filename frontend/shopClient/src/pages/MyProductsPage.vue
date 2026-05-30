@@ -30,7 +30,7 @@
         <div class="product-card" v-for="product in products" :key="product.id">
           <div class="card-image-wrapper">
             <q-img 
-              :src="product.imageUrl ? `http://26.151.165.100:8080${product.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              :src="productImage(product.imageUrl)" 
               class="card-image"
             />
             <q-chip size="sm" class="category-chip">{{ getCategoryLabel(product.category) }}</q-chip>
@@ -46,6 +46,10 @@
           
           <div class="card-content">
             <h3 class="card-title">{{ product.name }}</h3>
+            <div v-if="product.reviewCount" class="card-rating">
+              <q-rating :model-value="product.averageRating || 0" max="5" size="14px" color="amber" readonly />
+              <span>{{ product.averageRating }} ({{ product.reviewCount }})</span>
+            </div>
             <p class="card-description">{{ product.description }}</p>
             
             <div class="card-meta">
@@ -184,8 +188,10 @@ import { ref, reactive, onMounted } from 'vue';
 import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
 import { useCategoryLabel } from 'src/composables/useCategoryLabel';
+import { useMediaUrl } from 'src/composables/useMediaUrl';
 
 const { getCategoryLabel } = useCategoryLabel();
+const { productImage } = useMediaUrl();
 
 const $q = useQuasar();
 const products = ref([]);
@@ -308,7 +314,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .products-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -338,7 +344,7 @@ onMounted(() => {
 }
 
 .add-btn {
-  background: white;
+  background: var(--bg-card);
   color: #2e7d32;
   padding: 12px 24px;
   border-radius: 12px;
@@ -356,7 +362,7 @@ onMounted(() => {
 }
 
 .empty-state {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 80px 40px;
   text-align: center;
@@ -406,7 +412,7 @@ onMounted(() => {
 }
 
 .product-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
@@ -479,6 +485,15 @@ onMounted(() => {
   margin: 0 0 8px;
 }
 
+.card-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 0.8rem;
+  color: #888;
+}
+
 .card-description {
   font-size: 0.875rem;
   color: #666;
@@ -508,7 +523,7 @@ onMounted(() => {
 }
 
 .dialog-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   width: 500px;
   max-width: 90vw;

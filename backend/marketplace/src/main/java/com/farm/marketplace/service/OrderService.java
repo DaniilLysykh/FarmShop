@@ -1,6 +1,7 @@
 package com.farm.marketplace.service;
 
 import com.farm.marketplace.exception.AppException;
+import com.farm.marketplace.model.NotificationType;
 import com.farm.marketplace.model.*;
 import com.farm.marketplace.payload.request.OrderRequest;
 import com.farm.marketplace.payload.response.OrderItemResponse;
@@ -15,7 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +29,7 @@ public class OrderService {
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     private User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
@@ -44,6 +48,8 @@ public class OrderService {
                         .build())
                 .collect(Collectors.toList());
 
+        boolean forFarmer = farmerId != null;
+
         return OrderResponse.builder()
                 .id(order.getId())
                 .status(order.getStatus())
@@ -52,7 +58,15 @@ public class OrderService {
                 .totalPrice(farmerId == null ? order.getTotalPrice() : calculateSubTotal(items))
                 .createdAt(order.getCreatedAt())
                 .items(items)
+                .canFarmerUpdateStatus(forFarmer && isFarmerStatusEditable(order.getStatus()))
+                .canCustomerConfirmReceipt(!forFarmer && order.getStatus() == OrderStatus.DELIVERED)
                 .build();
+    }
+
+    private boolean isFarmerStatusEditable(OrderStatus status) {
+        return status != OrderStatus.DELIVERED
+                && status != OrderStatus.COMPLETED
+                && status != OrderStatus.CANCELLED;
     }
 
     private BigDecimal calculateSubTotal(List<OrderItemResponse> items) {
@@ -109,6 +123,28 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
         cartItemRepository.deleteAllByUserId(buyer.getId());
 
+        Set<User> farmersToNotify = new HashSet<>();
+        for (OrderItem item : savedOrder.getItems()) {
+            farmersToNotify.add(item.getProduct().getFarmer());
+        }
+        for (User farmer : farmersToNotify) {
+            notificationService.createNotification(
+                    farmer,
+                    NotificationType.ORDER_NEW,
+                    "Новый заказ",
+                    "Поступил заказ #" + savedOrder.getId() + " на сумму " + savedOrder.getTotalPrice() + " руб.",
+                    savedOrder.getId()
+            );
+        }
+
+        notificationService.createNotification(
+                buyer,
+                NotificationType.ORDER_STATUS,
+                "Заказ оформлен",
+                "Ваш заказ #" + savedOrder.getId() + " принят и ожидает подтверждения фермера.",
+                savedOrder.getId()
+        );
+
         // Покупатель видит весь заказ
         return mapToResponse(savedOrder, null);
     }
@@ -141,13 +177,89 @@ public class OrderService {
             throw new AppException("У вас нет прав изменять статус этого заказа", HttpStatus.FORBIDDEN);
         }
 
+        if (!isFarmerStatusEditable(order.getStatus())) {
+            throw new AppException("Статус этого заказа больше нельзя изменить", HttpStatus.BAD_REQUEST);
+        }
+
+        OrderStatus status;
         try {
-            OrderStatus status = OrderStatus.valueOf(newStatus.toUpperCase());
-            order.setStatus(status);
+            status = OrderStatus.valueOf(newStatus.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new AppException("Неверный статус заказа", HttpStatus.BAD_REQUEST);
         }
 
-        return mapToResponse(orderRepository.save(order), farmer.getId());
+        if (status == OrderStatus.COMPLETED) {
+            throw new AppException("Фермер не может установить статус «получен покупателем»", HttpStatus.BAD_REQUEST);
+        }
+
+        order.setStatus(status);
+
+        Order saved = orderRepository.save(order);
+        String statusLabel = getStatusLabel(status);
+        notificationService.createNotification(
+                order.getUser(),
+                NotificationType.ORDER_STATUS,
+                "Статус заказа изменён",
+                "Заказ #" + saved.getId() + ": " + statusLabel,
+                saved.getId()
+        );
+
+        return mapToResponse(saved, farmer.getId());
+    }
+
+    @Transactional
+    public OrderResponse confirmReceipt(Long orderId, String email) {
+        User buyer = getUserByEmail(email);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException("Заказ не найден", HttpStatus.NOT_FOUND));
+
+        if (!order.getUser().getId().equals(buyer.getId())) {
+            throw new AppException("Нет доступа к этому заказу", HttpStatus.FORBIDDEN);
+        }
+
+        if (order.getStatus() != OrderStatus.DELIVERED) {
+            throw new AppException(
+                    "Подтвердить получение можно только после передачи заказа фермером",
+                    HttpStatus.BAD_REQUEST
+            );
+        }
+
+        order.setStatus(OrderStatus.COMPLETED);
+        Order saved = orderRepository.save(order);
+
+        Set<User> farmersToNotify = new HashSet<>();
+        for (OrderItem item : saved.getItems()) {
+            farmersToNotify.add(item.getProduct().getFarmer());
+        }
+        for (User farmer : farmersToNotify) {
+            notificationService.createNotification(
+                    farmer,
+                    NotificationType.ORDER_STATUS,
+                    "Заказ завершён",
+                    "Покупатель подтвердил получение заказа #" + saved.getId(),
+                    saved.getId()
+            );
+        }
+
+        notificationService.createNotification(
+                buyer,
+                NotificationType.ORDER_STATUS,
+                "Получение подтверждено",
+                "Спасибо! Заказ #" + saved.getId() + " успешно завершён.",
+                saved.getId()
+        );
+
+        return mapToResponse(saved, null);
+    }
+
+    private String getStatusLabel(OrderStatus status) {
+        return switch (status) {
+            case PENDING -> "ожидает подтверждения";
+            case ACCEPTED -> "принят в работу";
+            case READY_FOR_PICKUP -> "готов к выдаче";
+            case DELIVERED -> "передан покупателю";
+            case COMPLETED -> "получение подтверждено";
+            case CANCELLED -> "отменён";
+        };
     }
 }

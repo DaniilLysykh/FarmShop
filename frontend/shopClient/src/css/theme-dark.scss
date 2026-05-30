@@ -1,0 +1,303 @@
+// Тёмная тема — переопределения для Quasar и кастомных компонентов
+
+body.body--dark {
+  color-scheme: dark;
+
+  // —— Зелёные шапки: текст остаётся белым ——
+  .page-header,
+  .hero-section,
+  .info-page .page-header {
+    .page-title,
+    .page-subtitle,
+    .hero-title,
+    .hero-subtitle,
+    .hero-badge {
+      color: #fff !important;
+    }
+
+    .page-subtitle,
+    .hero-subtitle {
+      color: rgba(255, 255, 255, 0.88) !important;
+    }
+  }
+
+  // —— Страницы ——
+  .q-page.home-page,
+  .q-page.catalog-page,
+  .q-page.cart-page,
+  .q-page.profile-page,
+  .q-page.orders-page,
+  .q-page.farmer-orders-page,
+  .q-page.favorites-page,
+  .q-page.products-page,
+  .q-page.notifications-page,
+  .q-page.reviews-page,
+  .q-page.info-page,
+  .q-page.auth-page {
+    background: var(--bg-page) !important;
+  }
+
+  .auth-page {
+    background: var(--auth-gradient) !important;
+  }
+
+  // —— Карточки и блоки ——
+  .product-card,
+  .order-card,
+  .profile-card,
+  .info-card,
+  .favorite-card,
+  .notification-card,
+  .review-card,
+  .feature-card,
+  .auth-container,
+  .auth-card,
+  .catalog-header,
+  .cart-items,
+  .summary-card,
+  .cart-summary .summary-card,
+  .dialog-card,
+  .action-card {
+    background: var(--bg-card) !important;
+    border-color: var(--border-color);
+    box-shadow: var(--shadow-card) !important;
+  }
+
+  .empty-state,
+  .loading-state:not(.hero-section .loading-state) {
+    background: var(--bg-card) !important;
+  }
+
+  .empty-icon {
+    background: var(--bg-muted) !important;
+
+    .q-icon {
+      color: var(--text-muted) !important;
+    }
+  }
+
+  // —— Поиск в каталоге ——
+  .search-input {
+    background: var(--bg-card) !important;
+
+    :deep(.q-field__control) {
+      background: var(--bg-card) !important;
+    }
+
+    :deep(.q-field__native),
+    :deep(input) {
+      color: var(--text-primary) !important;
+    }
+  }
+
+  .category-filter :deep(.q-field__control) {
+    background: var(--bg-card) !important;
+  }
+
+  // —— Quasar: поля ввода ——
+  .q-field--outlined {
+    .q-field__control {
+      background: var(--bg-card) !important;
+
+      &:before {
+        border-color: var(--border-color) !important;
+      }
+    }
+
+    .q-field__native,
+    .q-field__input,
+    .q-field__prefix,
+    .q-field__suffix {
+      color: var(--text-primary) !important;
+    }
+
+    .q-field__label {
+      color: var(--text-secondary) !important;
+    }
+
+    &.q-field--focused .q-field__label {
+      color: var(--text-accent) !important;
+    }
+  }
+
+  .q-field--dark .q-field__control,
+  .q-menu,
+  .q-dialog__inner > div {
+    color: var(--text-primary);
+  }
+
+  .q-separator {
+    background: var(--border-color) !important;
+  }
+
+  // —— Радио роли (регистрация) ——
+  .role-group :deep(.q-radio) {
+    background: var(--bg-muted) !important;
+    border-color: var(--border-color) !important;
+
+    &:hover {
+      background: var(--bg-subtle) !important;
+      border-color: var(--text-accent) !important;
+    }
+
+    &.q-radio--active {
+      background: rgba(76, 175, 80, 0.15) !important;
+      border-color: var(--text-accent) !important;
+    }
+  }
+
+  .role-group :deep(.q-radio__label) {
+    color: var(--text-primary) !important;
+  }
+
+  // —— Типографика ——
+  .product-name,
+  .card-title,
+  .catalog-title,
+  .profile-email,
+  .order-number,
+  .notification-title,
+  .info-card h2,
+  .auth-title,
+  .empty-title,
+  .actions-title,
+  .feature-card h3,
+  .summary-title,
+  .items-title,
+  .dialog-title,
+  .form-title,
+  .list-title {
+    color: var(--text-primary) !important;
+  }
+
+  .product-description,
+  .product-count,
+  .detail-label,
+  .notification-message,
+  .notification-date,
+  .review-date,
+  .auth-subtitle,
+  .footer-text,
+  .empty-text,
+  .rating-text,
+  .price-unit,
+  .card-description,
+  .action-content p,
+  .feature-card p,
+  .info-card p,
+  .info-card li,
+  .summary-row,
+  .item-price,
+  .meta-item span,
+  .dialog-rating,
+  .dialog-rating.muted,
+  .review-text,
+  .review-text.muted,
+  .empty-reviews,
+  .form-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .detail-value,
+  .item-name,
+  .item-qty,
+  .review-author,
+  .summary-value,
+  .item-total,
+  .meta-item,
+  .qty-value {
+    color: var(--text-primary) !important;
+  }
+
+  .price-value,
+  .total-value,
+  .footer-link,
+  .info-card :deep(a) {
+    color: var(--text-accent) !important;
+  }
+
+  .detail-row,
+  .review-item,
+  .cart-item,
+  .order-items .item {
+    border-color: var(--border-color) !important;
+  }
+
+  .detail-icon {
+    background: var(--bg-muted) !important;
+
+    .q-icon {
+      color: var(--text-secondary) !important;
+    }
+  }
+
+  .product-category,
+  .category-chip {
+    background: var(--bg-elevated) !important;
+    color: var(--text-accent) !important;
+    box-shadow: var(--shadow-card);
+  }
+
+  .item-quantity {
+    background: var(--bg-muted) !important;
+  }
+
+  .qty-btn {
+    color: var(--text-accent) !important;
+  }
+
+  // —— Диалог отзывов ——
+  .reviews-dialog,
+  .reviews-dialog.q-card {
+    background: var(--bg-card) !important;
+    color: var(--text-primary);
+  }
+
+  .review-form-section {
+    background: var(--bg-muted) !important;
+  }
+
+  .status-select :deep(.q-field__control) {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+  }
+
+  .items-section,
+  .address-row,
+  .order-details {
+    color: var(--text-secondary) !important;
+  }
+
+  // —— Уведомления: непрочитанные ——
+  .notification-card.unread {
+    background: var(--bg-elevated) !important;
+    border-left-color: var(--accent-orange) !important;
+  }
+
+  // —— Избранное: кнопка на карточке ——
+  .fav-btn {
+    background: var(--bg-card) !important;
+  }
+
+  // —— CTA на главной ——
+  .cta-section {
+    background: linear-gradient(135deg, #1b5e20 0%, #0d3d12 100%) !important;
+
+    h2,
+    p {
+      color: #fff !important;
+    }
+  }
+
+  // —— Иконки на карточках товаров (серые) ——
+  .product-actions .q-btn--flat {
+    color: var(--text-secondary) !important;
+  }
+
+  // —— Плейсхолдеры пустых состояний ——
+  .empty-state__icon,
+  .empty-icon .q-icon {
+    color: var(--text-muted) !important;
+    opacity: 0.5;
+  }
+}

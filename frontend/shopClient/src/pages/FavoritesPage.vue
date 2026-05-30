@@ -28,7 +28,7 @@
         <div class="favorite-card" v-for="item in favorites" :key="item.id">
           <div class="card-image-wrapper">
             <q-img 
-              :src="item.imageUrl ? `http://26.151.165.100:8080${item.imageUrl}` : 'https://via.placeholder.com/400x300?text=Нет+фото'" 
+              :src="productImage(item.imageUrl)" 
               class="card-image"
             />
             <q-btn round flat icon="favorite" color="red" class="fav-btn" @click="removeFromFavorites(item.id)">
@@ -55,7 +55,9 @@
 import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
+import { useMediaUrl } from 'src/composables/useMediaUrl';
 
+const { productImage } = useMediaUrl();
 const $q = useQuasar();
 const favorites = ref([]);
 const loading = ref(true);
@@ -100,7 +102,7 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .favorites-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -141,7 +143,7 @@ onMounted(() => {
 }
 
 .empty-state {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 80px 40px;
   text-align: center;
@@ -191,7 +193,7 @@ onMounted(() => {
 }
 
 .favorite-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   overflow: hidden;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
@@ -217,7 +219,7 @@ onMounted(() => {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: white;
+  background: var(--bg-card);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
 

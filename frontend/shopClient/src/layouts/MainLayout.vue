@@ -19,13 +19,17 @@
         </nav>
 
         <div class="header-actions">
+          <ThemeToggle />
+
           <template v-if="authStore.isLoggedIn">
             <q-btn v-if="authStore.isCustomer" flat round icon="shopping_cart" to="/cart" class="action-btn">
               <q-tooltip>Корзина</q-tooltip>
             </q-btn>
             
-            <q-btn flat round icon="notifications" class="action-btn q-mr-sm">
-              <q-badge color="orange" floating rounded>2</q-badge>
+            <q-btn flat round icon="notifications" class="action-btn q-mr-sm" to="/notifications">
+              <q-badge v-if="notificationsStore.unreadCount > 0" color="orange" floating rounded>
+                {{ notificationsStore.unreadCount > 9 ? '9+' : notificationsStore.unreadCount }}
+              </q-badge>
               <q-tooltip>Уведомления</q-tooltip>
             </q-btn>
             
@@ -60,9 +64,9 @@
           <span>Фермерская лавка 2026</span>
         </div>
         <div class="footer-links">
-          <span class="footer-link">О нас</span>
-          <span class="footer-link">Контакты</span>
-          <span class="footer-link">Доставка</span>
+          <router-link to="/about" class="footer-link">О нас</router-link>
+          <router-link to="/contacts" class="footer-link">Контакты</router-link>
+          <router-link to="/delivery" class="footer-link">Доставка</router-link>
         </div>
       </div>
     </q-footer>
@@ -70,14 +74,58 @@
 </template>
 
 <script setup>
+import { onMounted, onUnmounted, watch } from 'vue';
 import { useAuthStore } from 'stores/auth';
+import { useNotificationsStore } from 'stores/notifications';
+import { useThemeStore } from 'stores/theme';
 import { useRouter } from 'vue-router';
+import ThemeToggle from 'components/ThemeToggle.vue';
 
 const authStore = useAuthStore();
+const notificationsStore = useNotificationsStore();
+const themeStore = useThemeStore();
 const router = useRouter();
+
+let pollTimer = null;
+
+const startPolling = () => {
+  if (pollTimer) return;
+  notificationsStore.fetchUnreadCount();
+  pollTimer = setInterval(() => {
+    notificationsStore.fetchUnreadCount();
+  }, 60000);
+};
+
+const stopPolling = () => {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+};
+
+watch(
+  () => authStore.isLoggedIn,
+  (loggedIn) => {
+    if (loggedIn) {
+      startPolling();
+    } else {
+      stopPolling();
+      notificationsStore.reset();
+    }
+  },
+  { immediate: true }
+);
+
+onMounted(() => {
+  themeStore.init();
+  if (authStore.isLoggedIn) startPolling();
+});
+
+onUnmounted(stopPolling);
 
 const logout = () => {
   authStore.logout();
+  notificationsStore.reset();
   router.push('/login');
 };
 </script>
@@ -225,12 +273,18 @@ const logout = () => {
 
 .footer-link {
   font-size: 0.875rem;
+  color: white;
+  text-decoration: none;
   opacity: 0.8;
-  cursor: pointer;
   transition: opacity 0.3s ease;
-  
+
   &:hover {
     opacity: 1;
+  }
+
+  &.router-link-active {
+    opacity: 1;
+    text-decoration: underline;
   }
 }
 </style>

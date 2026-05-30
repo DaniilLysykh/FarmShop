@@ -1,10 +1,9 @@
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
+import { apiBaseUrl } from 'src/config/env';
 
-// const api = axios.create({ baseURL: 'http://26.151.165.100:8080/api' });
-const api = axios.create({ baseURL: 'http://localhost:8080/api' });
+const api = axios.create({ baseURL: apiBaseUrl });
 
-// Если токен уже есть в браузере (после перезагрузки), прикрепляем его
 const token = localStorage.getItem('token');
 if (token) {
   api.defaults.headers.common['Authorization'] = `Bearer ${token}`;

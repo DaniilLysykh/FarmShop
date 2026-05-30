@@ -31,8 +31,8 @@
               <h3 class="order-number">Заказ #{{ order.id }}</h3>
               <span class="order-date">{{ formatDate(order.createdAt) }}</span>
             </div>
-            <q-chip :color="statusMap[order.status].color" text-color="white" class="status-chip">
-              {{ statusMap[order.status].label }}
+            <q-chip :color="getStatus(order.status).color" text-color="white" class="status-chip">
+              {{ getStatus(order.status).label }}
             </q-chip>
           </div>
 
@@ -59,6 +59,19 @@
             <div class="total-label">Итого:</div>
             <div class="total-value">{{ order.totalPrice }} руб.</div>
           </div>
+
+          <div v-if="order.canCustomerConfirmReceipt" class="confirm-section">
+            <p class="confirm-hint">Фермер передал заказ. Подтвердите, что вы его получили.</p>
+            <q-btn
+              unelevated
+              color="green-8"
+              icon="check_circle"
+              label="Подтвердить получение"
+              class="confirm-btn"
+              :loading="confirmingId === order.id"
+              @click="confirmReceipt(order.id)"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -68,20 +81,17 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
+import { useQuasar } from 'quasar';
 import { useFormatDate } from 'src/composables/useFormatDate';
+import { useOrderStatus } from 'src/composables/useOrderStatus';
 
 const { formatDate } = useFormatDate();
+const { getStatus } = useOrderStatus();
+const $q = useQuasar();
 
 const orders = ref([]);
 const loading = ref(true);
-
-const statusMap = {
-  PENDING: { label: 'Ожидает', color: 'orange' },
-  ACCEPTED: { label: 'В работе', color: 'blue' },
-  READY_FOR_PICKUP: { label: 'Готов', color: 'purple' },
-  DELIVERED: { label: 'Выполнен', color: 'green' },
-  CANCELLED: { label: 'Отменен', color: 'red' }
-};
+const confirmingId = ref(null);
 
 const loadOrders = async () => {
   try {
@@ -94,12 +104,33 @@ const loadOrders = async () => {
   }
 };
 
+const confirmReceipt = (orderId) => {
+  $q.dialog({
+    title: 'Подтвердить получение',
+    message: 'Вы подтверждаете, что получили заказ? После этого статус изменить будет нельзя.',
+    cancel: true,
+    persistent: true,
+  }).onOk(async () => {
+    confirmingId.value = orderId;
+    try {
+      await api.put(`/orders/${orderId}/confirm-receipt`);
+      $q.notify({ type: 'positive', message: 'Спасибо! Получение подтверждено.' });
+      await loadOrders();
+    } catch (error) {
+      const msg = error.response?.data?.error || 'Не удалось подтвердить получение';
+      $q.notify({ type: 'negative', message: msg });
+    } finally {
+      confirmingId.value = null;
+    }
+  });
+};
+
 onMounted(() => loadOrders());
 </script>
 
 <style scoped lang="scss">
 .orders-page {
-  background: #f5f7f5;
+  background: var(--bg-page);
   min-height: 100vh;
 }
 
@@ -140,7 +171,7 @@ onMounted(() => loadOrders());
 }
 
 .empty-state {
-  background: white;
+  background: var(--bg-card);
   border-radius: 24px;
   padding: 80px 40px;
   text-align: center;
@@ -190,7 +221,7 @@ onMounted(() => loadOrders());
 }
 
 .order-card {
-  background: white;
+  background: var(--bg-card);
   border-radius: 20px;
   padding: 24px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
@@ -293,6 +324,24 @@ onMounted(() => loadOrders());
 .total-value {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #2e7d32;
+  color: var(--text-accent);
+}
+
+.confirm-section {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-color);
+}
+
+.confirm-hint {
+  margin: 0 0 12px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.confirm-btn {
+  width: 100%;
+  border-radius: 12px;
+  font-weight: 600;
 }
 </style>
