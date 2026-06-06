@@ -9,7 +9,7 @@
   "scripts": {
     "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{js,cjs,mjs,vue}\"",
     "format": "prettier --write \"**/*.{js,vue,css,scss,html,md,json}\" --ignore-path .gitignore",
-    "test": "echo \"No test specified\" && exit 0",
+    "test": "vitest run",
     "dev": "quasar dev",
     "build": "quasar build",
     "postinstall": "quasar prepare"
@@ -31,7 +31,9 @@
     "eslint-plugin-vue": "^10.8.0",
     "globals": "^17.4.0",
     "postcss": "^8.5.8",
+    "jsdom": "^26.0.0",
     "prettier": "^3.8.1",
+    "vitest": "^2.1.8",
     "vite-plugin-checker": "^0.12.0",
     "vue-eslint-parser": "^10.4.0"
   },
