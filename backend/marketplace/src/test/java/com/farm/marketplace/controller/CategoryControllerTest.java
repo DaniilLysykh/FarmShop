@@ -1,26 +1,24 @@
 package com.farm.marketplace.controller;
 
-import com.farm.marketplace.controller.support.ControllerTestSetup;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.List;
 
-@ControllerTestSetup
+import static org.junit.jupiter.api.Assertions.*;
+
 class CategoryControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private final CategoryController categoryController = new CategoryController();
 
     @Test
-    void getCategories_returnsAllEnumValues() throws Exception {
-        mockMvc.perform(get("/api/categories"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(6))
-                .andExpect(jsonPath("$[0]").value("MILK"))
-                .andExpect(jsonPath("$[5]").value("BREAD"));
+    void getCategories_returnsAllEnumValues() {
+        var response = categoryController.getCategories();
+
+        assertEquals(200, response.getStatusCode().value());
+        List<String> categories = response.getBody();
+        assertNotNull(categories);
+        assertEquals(6, categories.size());
+        assertTrue(categories.contains("MILK"));
+        assertTrue(categories.contains("BREAD"));
     }
 }

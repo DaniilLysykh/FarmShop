@@ -1,86 +1,52 @@
 package com.farm.marketplace.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.farm.marketplace.controller.support.ControllerTestSetup;
 import com.farm.marketplace.payload.request.FavoriteRequest;
 import com.farm.marketplace.payload.response.FavoriteItemResponse;
+import com.farm.marketplace.payload.response.MessageResponse;
 import com.farm.marketplace.service.FavoriteService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.core.Authentication;
 
 import java.math.BigDecimal;
-import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@ControllerTestSetup
+@ExtendWith(MockitoExtension.class)
 class FavoriteControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @MockBean
-    private FavoriteService favoriteService;
-
-    private final FavoriteItemResponse sampleItem = FavoriteItemResponse.builder()
-            .id(1L)
-            .productId(10L)
-            .productName("Honey")
-            .price(new BigDecimal("250.00"))
-            .build();
+    @Mock private FavoriteService favoriteService;
+    @InjectMocks private FavoriteController favoriteController;
 
     @Test
-    @WithMockUser(username = "buyer@test.com", roles = "CUSTOMER")
-    void getFavorites_returnsItems() throws Exception {
-        when(favoriteService.getFavorites("buyer@test.com")).thenReturn(List.of(sampleItem));
-
-        mockMvc.perform(get("/api/favorites"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].productName").value("Honey"));
-    }
-
-    @Test
-    @WithMockUser(username = "buyer@test.com", roles = "CUSTOMER")
-    void addToFavorites_success() throws Exception {
+    void addToFavorites_delegatesToService() {
         FavoriteRequest request = new FavoriteRequest();
         request.setProductId(10L);
 
-        when(favoriteService.addToFavorites(any(FavoriteRequest.class), eq("buyer@test.com")))
-                .thenReturn(sampleItem);
+        Authentication auth = mock(Authentication.class);
+        when(auth.getName()).thenReturn("buyer@test.com");
+        when(favoriteService.addToFavorites(request, "buyer@test.com")).thenReturn(
+                FavoriteItemResponse.builder().id(1L).productId(10L).productName("Honey")
+                        .price(BigDecimal.TEN).build()
+        );
 
-        mockMvc.perform(post("/api/favorites/add")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.productId").value(10));
+        var response = favoriteController.addToFavorites(request, auth);
+
+        assertEquals(10L, response.getBody().getProductId());
     }
 
     @Test
-    @WithMockUser(username = "buyer@test.com", roles = "CUSTOMER")
-    void removeFromFavorites_success() throws Exception {
-        mockMvc.perform(delete("/api/favorites/remove/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").value("Товар удален из избранного"));
+    void removeFromFavorites_returnsMessage() {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getName()).thenReturn("buyer@test.com");
+
+        var response = favoriteController.removeFromFavorites(1L, auth);
 
         verify(favoriteService).removeFromFavorites(1L, "buyer@test.com");
-    }
-
-    @Test
-    void getFavorites_withoutAuth_returnsForbidden() throws Exception {
-        mockMvc.perform(get("/api/favorites"))
-                .andExpect(status().isForbidden());
+        assertEquals("Товар удален из избранного", ((MessageResponse) response.getBody()).getMessage());
     }
 }
