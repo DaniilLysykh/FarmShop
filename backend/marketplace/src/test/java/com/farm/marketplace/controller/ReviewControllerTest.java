@@ -1,19 +1,16 @@
 package com.farm.marketplace.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.farm.marketplace.config.MethodSecurityTestConfig;
-import com.farm.marketplace.exception.GlobalExceptionHandler;
+import com.farm.marketplace.controller.support.ControllerTestSetup;
 import com.farm.marketplace.payload.request.ReviewRequest;
 import com.farm.marketplace.payload.response.ReviewResponse;
 import com.farm.marketplace.service.ReviewService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -27,9 +24,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(ReviewController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@Import({GlobalExceptionHandler.class, MethodSecurityTestConfig.class})
+@WebMvcTest(controllers = ReviewController.class)
+@ControllerTestSetup
 class ReviewControllerTest {
 
     @Autowired
@@ -38,7 +34,7 @@ class ReviewControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockitoBean
+    @MockBean
     private ReviewService reviewService;
 
     private final ReviewResponse sampleReview = ReviewResponse.builder()

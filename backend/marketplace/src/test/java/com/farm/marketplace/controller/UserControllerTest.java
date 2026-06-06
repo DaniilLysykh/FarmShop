@@ -1,17 +1,14 @@
 package com.farm.marketplace.controller;
 
-import com.farm.marketplace.config.MethodSecurityTestConfig;
-import com.farm.marketplace.exception.GlobalExceptionHandler;
+import com.farm.marketplace.controller.support.ControllerTestSetup;
 import com.farm.marketplace.model.Role;
 import com.farm.marketplace.model.User;
 import com.farm.marketplace.repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -23,15 +20,14 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
-@AutoConfigureMockMvc(addFilters = false)
-@Import({GlobalExceptionHandler.class, MethodSecurityTestConfig.class})
+@WebMvcTest(controllers = UserController.class)
+@ControllerTestSetup
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     private UserRepository userRepository;
 
     @Test
